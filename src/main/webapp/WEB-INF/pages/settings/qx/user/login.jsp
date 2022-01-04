@@ -13,9 +13,27 @@
 <script type="text/javascript">
 $(function () {
 	//给"登录"按钮添加单击事件
-	$("#loginBtn").click(function () {
+	/*$("#loginBtn").click(function () {
 		window.location.href="workbench/index.do";
-	});
+	});*/
+	$("#loginBtn").on("click",function () {
+		var loginAct=$("#loginAct").val();
+		var loginPwd=$("#loginPwd").val();
+		if(loginAct==""||loginPwd==""){
+			$("#msg").text("用户名和密码不能为空")
+			return;
+		}
+		$.ajax({
+			url:"settings/qx/user/login",
+			type:"post",
+			success:function (data) {
+				//字符串，数组，数字，对象
+				//{"code":1}
+				/*window.location.href="workbench/index.do";*/
+				window.alert("hahahahha")
+			}
+		})
+	})
 });
 </script>
 </head>
