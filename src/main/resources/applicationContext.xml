@@ -23,4 +23,5 @@ http://www.springframework.org/schema/aop/spring-aop.xsd">
     <!-- 导入数据相关配置 -->
     <import resource="applicationContext-datasource.xml" />
     <import resource="applicationContext-redis.xml"/>
+
 </beans>

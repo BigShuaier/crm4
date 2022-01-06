@@ -17,20 +17,29 @@ $(function () {
 		window.location.href="workbench/index.do";
 	});*/
 	$("#loginBtn").on("click",function () {
-		var loginAct=$("#loginAct").val();
-		var loginPwd=$("#loginPwd").val();
+		var loginAct=$.trim($("#loginAct").val())
+		var loginPwd=$.trim($("#loginPwd").val())
 		if(loginAct==""||loginPwd==""){
 			$("#msg").text("用户名和密码不能为空")
 			return;
 		}
 		$.ajax({
-			url:"settings/qx/user/login",
+			url:"settings/qx/user/login.do",
 			type:"post",
+			data:{loginAct:loginAct,
+				loginPwd:loginPwd
+			},
 			success:function (data) {
 				//字符串，数组，数字，对象
 				//{"code":1}
 				/*window.location.href="workbench/index.do";*/
-				window.alert("hahahahha")
+				//window.alert("hahahahha")
+				if(data.code==1){
+					window.location.href="workbench/index.do"
+				}else {
+					$("#msg").html(data.message)
+				}
+
 			}
 		})
 	})
