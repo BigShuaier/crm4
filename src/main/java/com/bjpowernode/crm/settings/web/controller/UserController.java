@@ -1,6 +1,7 @@
 package com.bjpowernode.crm.settings.web.controller;
 
 import com.bjpowernode.crm.commons.utils.MD5Util;
+import com.bjpowernode.crm.commons.utils.Result;
 import com.bjpowernode.crm.settings.domain.User;
 import com.bjpowernode.crm.settings.service.UserService;
 import org.omg.CORBA.Request;
@@ -32,21 +33,16 @@ public class UserController {
     @ResponseBody
     public Object login(String loginAct, String loginPwd, HttpServletRequest request){
         //响应结果集合
-        Map<String,Object>retMap=new HashMap<String,Object>();
-
         User user=userService.queryUserByloginActAndPwd(loginAct, MD5Util.getMD5(loginPwd));
         if(user==null){
             //返回错误信息
             //提示用户：账号或密码有误
-           retMap.put("code", 0);
-           retMap.put("message", "账号或者密码有误");
-           return retMap;
+           return Result.fail("用户名或密码有误");
         }
         //将用户信息存放在session当中
         request.getSession().setAttribute("sessionUser", user);
         //返回正确的信息
-        retMap.put("code", 1);
-        return retMap;
+        return Result.success();
     }
 
 }
