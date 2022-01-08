@@ -18,4 +18,6 @@ public interface UserMapper {
     int updateByPrimaryKey(User record);
 
     User queryUserByloginActAndPwd(Map<String, Object> paramMap);
+
+    User queryUserByloginAct(String loginAct);
 }

@@ -189,4 +189,9 @@
     select <include refid="Base_Column_List"/>from tbl_user
     where login_Act=#{loginAct} and login_pwd=#{MD5}
   </select>
+  <select id="queryUserByloginAct" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from tbl_user
+    where login_act=#{loginAct}
+  </select>
 </mapper>

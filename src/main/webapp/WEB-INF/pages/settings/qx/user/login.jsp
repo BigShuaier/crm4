@@ -19,6 +19,7 @@ $(function () {
 	$("#loginBtn").on("click",function () {
 		var loginAct=$.trim($("#loginAct").val())
 		var loginPwd=$.trim($("#loginPwd").val())
+        var isRemPwd=$("#isRemPwd").prop("checked")
 		if(loginAct==""||loginPwd==""){
 			$("#msg").text("用户名和密码不能为空")
 			return;
@@ -27,7 +28,8 @@ $(function () {
 			url:"settings/qx/user/login.do",
 			type:"post",
 			data:{loginAct:loginAct,
-				loginPwd:loginPwd
+				loginPwd:loginPwd,
+                isRemPwd:isRemPwd
 			},
 			success:function (data) {
 				//字符串，数组，数字，对象

@@ -27,4 +27,9 @@ public class Contant {
      * 状态信息
      */
     public static final String STATE_MESSAGE="message";
+    /**
+     * 用户锁定状态
+     */
+    public static final String STATE_UNLOCK="1";
+    public static final String STATE_LOCK="2";
 }

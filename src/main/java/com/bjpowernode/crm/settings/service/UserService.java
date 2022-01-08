@@ -9,4 +9,6 @@ import com.bjpowernode.crm.settings.domain.User;
  */
 public interface UserService {
    User queryUserByloginActAndPwd(String loginAct, String MD5);
+
+    User queryUserByloginAct(String loginAct);
 }

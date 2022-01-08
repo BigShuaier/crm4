@@ -40,7 +40,6 @@
                enableDeleteByExample="false"
                enableSelectByExample="false"
                selectByExampleQueryId="false"/>
-
         <table tableName="tbl_dic_type" domainObjectName="DicType"
                enableCountByExample="false"
                enableUpdateByExample="false"

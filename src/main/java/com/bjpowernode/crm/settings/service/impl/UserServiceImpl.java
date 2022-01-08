@@ -24,4 +24,9 @@ public class UserServiceImpl implements UserService {
         paramMap.put("MD5", MD5);
         return userMapper.queryUserByloginActAndPwd(paramMap);
     }
+
+    @Override
+    public User queryUserByloginAct(String loginAct) {
+        return userMapper.queryUserByloginAct(loginAct);
+    }
 }
