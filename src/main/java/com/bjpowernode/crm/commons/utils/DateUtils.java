@@ -25,7 +25,6 @@ public class DateUtils {
         String str=sdf.format(d);
         return str;
     }
-
     public static Integer getRemainSecondsOneDay(Date currentDate) {
         //使用plusDays加传入的时间加1天，将时分秒设置成0
         LocalDateTime midnight = LocalDateTime.ofInstant(currentDate.toInstant(), ZoneId.systemDefault()).plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);

@@ -40,20 +40,26 @@ public class UserController {
     public String toLogin() {
         return "settings/qx/user/login";
     }
+    //用户登录
     @RequestMapping("/settings/qx/user/login.do")
     @ResponseBody
     public Object login(String loginAct, String loginPwd, HttpServletRequest request,boolean isRemPwd,HttpServletResponse response) throws ParseException {
+        //序列化与反序列化一致
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<Object>(Object.class));
         redisTemplate.setKeySerializer(new Jackson2JsonRedisSerializer<Object>(Object.class));
+        //验证账号是否存在
         User user1 = userService.queryUserByloginAct(loginAct);
         if(user1==null){
             return Result.fail("账号或者密码错误");
         }
+        //绑定key值
         BoundValueOperations boundValueOperations = redisTemplate.boundValueOps(loginAct);
         Integer errocount =(Integer) boundValueOperations.get();
-        if(errocount!=null&&                errocount==3){
+        //密码输入错误三次，密码自动锁定
+        if(errocount!=null&&errocount==3){
             return Result.fail("输入次数已超过三次，账号已经被锁定，请练习管理员");
         }
+        //验证账号和密码是否正确
         User user=userService.queryUserByloginActAndPwd(loginAct, MD5Util.getMD5(loginPwd));
         if(user==null){
 
@@ -82,13 +88,17 @@ public class UserController {
             response.addCookie(loginAct1);
             response.addCookie(loginPwd1);
         }
-        //将用户信息存放在session当中
+        //将用户信息存放在session当中，显示用户信息
         request.getSession().setAttribute("sessionUser", user);
         //返回正确的信息
         return Result.success();
     }
+    //用户退出
    @RequestMapping("settings/qx/user/logout.do")
     public String loginOut(HttpServletRequest request){
+        //清空session
+       //让所有session无效
+       //删除指定的session
         request.getSession().invalidate();
         return "redirect:/";
     }

@@ -32,4 +32,8 @@ public class Contant {
      */
     public static final String STATE_UNLOCK="1";
     public static final String STATE_LOCK="2";
+    /**
+     * 成功数据
+     */
+    public static final String RETURN_DATA="data";
 }

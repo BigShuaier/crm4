@@ -41,7 +41,6 @@ $(function () {
 				}else {
 					$("#msg").html(data.message)
 				}
-
 			}
 		})
 	})

@@ -21,7 +21,7 @@ public class Result extends HashMap<String,Object> {
      */
     public static Result success(){
         Result result=new Result();
-        result.put("code", Contant.SUCCESS_CODE);
+        result.put(Contant.STATE_CODE, Contant.SUCCESS_CODE);
         return result;
     }
 
@@ -34,6 +34,12 @@ public class Result extends HashMap<String,Object> {
         Result result = new Result();
         result.put(Contant.STATE_CODE,Contant.FAIL_CODE);
         result.put(Contant.STATE_MESSAGE, message);
+        return result;
+    }
+    public static Result success(Object object){
+        Result result = new Result();
+        result.put(Contant.STATE_CODE, 1);
+        result.put(Contant.RETURN_DATA,object);
         return result;
     }
 }

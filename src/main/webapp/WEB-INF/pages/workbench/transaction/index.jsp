@@ -18,23 +18,19 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
 <script type="text/javascript">
-
 	$(function(){
-
 	    //给"创建"按钮添加单击事件
         $("#createTranBtn").click(function () {
             //发送同步请求
             window.location.href="workbench/transaction/createTran.do";
         });
-		
 	});
-	
 </script>
 </head>
 <body>
 
-	
-	
+
+
 	<div>
 		<div style="position: relative; left: 10px; top: -10px;">
 			<div class="page-header">
@@ -42,37 +38,37 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			</div>
 		</div>
 	</div>
-	
+
 	<div style="position: relative; top: -20px; left: 0px; width: 100%; height: 100%;">
-	
+
 		<div style="width: 100%; position: absolute;top: 5px; left: 10px;">
-		
+
 			<div class="btn-toolbar" role="toolbar" style="height: 80px;">
 				<form class="form-inline" role="form" style="position: relative;top: 8%; left: 5px;">
-				  
+
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">所有者</div>
 				      <input class="form-control" type="text">
 				    </div>
 				  </div>
-				  
+
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">名称</div>
 				      <input class="form-control" type="text">
 				    </div>
 				  </div>
-				  
+
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">客户名称</div>
 				      <input class="form-control" type="text">
 				    </div>
 				  </div>
-				  
+
 				  <br>
-				  
+
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">阶段</div>
@@ -84,7 +80,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					  </select>
 				    </div>
 				  </div>
-				  
+
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">类型</div>
@@ -96,7 +92,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					  </select>
 				    </div>
 				  </div>
-				  
+
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">来源</div>
@@ -108,16 +104,16 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 						</select>
 				    </div>
 				  </div>
-				  
+
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">联系人名称</div>
 				      <input class="form-control" type="text">
 				    </div>
 				  </div>
-				  
+
 				  <button type="submit" class="btn btn-default">查询</button>
-				  
+
 				</form>
 			</div>
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 10px;">
@@ -126,8 +122,8 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				  <button type="button" class="btn btn-default" onclick="window.location.href='edit.html';"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
 				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
-				
-				
+
+
 			</div>
 			<div style="position: relative;top: 10px;">
 				<table class="table table-hover">
@@ -167,7 +163,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					</tbody>
 				</table>
 			</div>
-			
+
 			<div style="height: 50px; position: relative;top: 20px;">
 				<div>
 					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
@@ -202,9 +198,9 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					</nav>
 				</div>
 			</div>
-			
+
 		</div>
-		
+
 	</div>
 </body>
 </html>
