@@ -114,10 +114,5 @@ public class DicTypeController {
         }
         return Result.success(count);
     }
-    //字典值
-    @RequestMapping("settings/dictionary/value/index.do")
-    public String valueIndex(){
-        return "settings/dictionary/value/index";
-    }
-    //
+
 }

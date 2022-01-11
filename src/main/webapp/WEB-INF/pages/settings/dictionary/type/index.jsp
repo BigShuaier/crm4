@@ -11,11 +11,13 @@
 
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="jquery/common/common.js"></script>
 <script>
 	$(function () {
 		queryDicTypes()
         editDicType()
 		deleteDicType()
+
 	})
 	function queryDicTypes() {
 		$.ajax({
@@ -32,7 +34,6 @@
 					htmlStr+="<td>"+item.name+"</td>"
 					htmlStr+="<td>"+item.name+"</td>"
 					htmlStr+="</tr>"
-
 				})
 				$("#tBody").html(htmlStr)
 			}
@@ -90,6 +91,7 @@
 					}
 
 			})
+
 
 	}
 </script>

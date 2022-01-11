@@ -13,6 +13,55 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+	<script>
+		$(function () {
+			queryAllDicType()
+            $("#saveCreateDicValueBtn").on("click",function () {
+                var code=$.trim($("#create-dicTypeCode").val())
+                var value=$.trim($("#create-dicValue").val())
+                var text=$.trim($("#create-text").val())
+                var orderNo=$.trim($("#create-orderNo").val())
+				if(""==code||""==value){
+					alert("数据字典类型编码和数据字典值不能为空")
+					return;
+				}
+                $.ajax({
+                    url:"settings/dictionary/type/save/saveCreateDicValue.do",
+                    type:"post",
+                    data:{
+                        typeCode:code,
+                        value:value,
+                        text:text,
+                        orderNo:orderNo
+                    },
+                    success:function (data) {
+                        if(data.code==1){
+                            alert("添加成功")
+                            window.location.href='settings/dictionary/value/index.do'
+                        }else {
+                            window.alert(data.message)
+                        }
+                    }
+                })
+            })
+		})
+
+	function queryAllDicType() {
+		var htmlStr="<option>-----------请选择-----------</option>"
+		$.ajax({
+			url:"settings/dictionary/type/index/queryAllDicType.do",
+			type:"get",
+			success:function (data) {
+				$.each(data,function (index,item) {
+					htmlStr+="<option value="+item.code+">"+item.name+"</option>"
+				})
+				$("#create-dicTypeCode").html(htmlStr)
+			}
+		})
+	}
+
+	</script>
+
 </head>
 <body>
 
@@ -25,33 +74,30 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		<hr style="position: relative; top: -40px;">
 	</div>
 	<form class="form-horizontal" role="form">
-					
+
 		<div class="form-group">
 			<label for="create-dicTypeCode" class="col-sm-2 control-label">字典类型编码<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
 				<select class="form-control" id="create-dicTypeCode" style="width: 200%;">
-					<option>-----------请选择-----------</option>
-					<option value="sex">性别</option>
-					<option value="appellation">称呼</option>
-					<option value="stage">阶段</option>
+
 				</select>
 			</div>
 		</div>
-		
+
 		<div class="form-group">
 			<label for="create-dicValue" class="col-sm-2 control-label">字典值<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
 				<input type="text" class="form-control" id="create-dicValue" style="width: 200%;">
 			</div>
 		</div>
-		
+
 		<div class="form-group">
 			<label for="create-text" class="col-sm-2 control-label">文本</label>
 			<div class="col-sm-10" style="width: 300px;">
 				<input type="text" class="form-control" id="create-text" style="width: 200%;">
 			</div>
 		</div>
-		
+
 		<div class="form-group">
 			<label for="create-orderNo" class="col-sm-2 control-label">排序号</label>
 			<div class="col-sm-10" style="width: 300px;">
@@ -59,7 +105,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			</div>
 		</div>
 	</form>
-	
+
 	<div style="height: 200px;"></div>
 </body>
 </html>
