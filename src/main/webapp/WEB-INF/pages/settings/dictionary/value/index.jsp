@@ -15,6 +15,8 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 	<script>
 		$(function () {
 			queryDicValue()
+			editDicValue()
+			deleteDicValue()
 		})
 		function queryDicValue() {
 			$.ajax({
@@ -24,7 +26,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					var htmlStr=""
 					$.each(data,function (index,item) {
 						htmlStr+="<tr class=\"active\">"
-						htmlStr+="<td><input type=\"checkbox\" value="+item.name+"/></td>"
+						htmlStr+="<td><input type=\"checkbox\" value="+item.id+"></td>"
 						htmlStr+="<td>"+(index+1)+"</td>"
 						htmlStr+="<td>"+item.value+"</td>"
 						htmlStr+="<td>"+item.text+"</td>"
@@ -37,7 +39,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			})
 		}
 		function editDicValue(){
-			$("#createDicValueBtn").on("click",function(){
+			$("#editDicValueBtn").on("click",function(){
 				var checked=$("#tBody input[type='checkbox']:checked")
 				if(checked.size()==0){
 					window.alert("请选择一条数据")
@@ -47,8 +49,38 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					alert("只能选择一条数据")
 					return;
 				}
-				var value=checked.val()
-				window.location.href="settings/dictionary/value/index/editDicValue.do?value="+value
+				var id=checked.val()
+				window.location.href="settings/dictionary/value/index/editDicValue.do?id="+id
+			})
+		}
+		function deleteDicValue() {
+			$("#deleteDicValueBtn").on("click",function () {
+				//获取所有被选中的数据
+				var checkeds=$("#tBody input[type='checkbox']:checked")
+				//判断是否被选中
+				if(checkeds.size()==0){
+					alert("请选择数据")
+				}
+				//将选中的记录的id遍历拼接成字符串
+				var ids=""
+				$.each(checkeds,function (index,item) {
+					ids+="id="+$(item).val()+"&"
+				})
+				ids=ids.substring(0,ids.length-1)
+				//异步请求
+				$.ajax({
+					url:"settings/dictionary/value/index/deleteDicValue.do",
+					type:"post",
+					data:ids,
+					success:function (data) {
+						if(data.code==1){
+							alert("您成功删除了"+data.data +"数据")
+							queryDicValue()
+						}else {
+							alert(data.message)
+						}
+					}
+				})
 			})
 		}
 	</script>

@@ -19,4 +19,8 @@ public interface DicValueMapper {
     int updateByPrimaryKey(DicValue record);
 
     List<DicValue> queryAllDicValue();
+
+    DicValue selectByPrimaryKey1(String id);
+
+    int deleteCheckedId(String[] id);
 }

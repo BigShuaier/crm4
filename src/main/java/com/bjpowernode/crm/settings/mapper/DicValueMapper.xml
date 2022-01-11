@@ -95,4 +95,25 @@
     from tbl_dic_value
     order by order_no
   </select>
+  <select id="selectDicTypeByValue" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from tbl_dic_value
+    where
+    value = #{value}
+  </select>
+  <select id="selectByPrimaryKey1" resultMap="BaseResultMap">
+    select v.id, v.value, v.text, v.order_no, t.name as type_code
+    from tbl_dic_value v
+    left join tbl_dic_type t
+    on v.type_code=t.code
+    where
+    id =#{id}
+  </select>
+  <delete id="deleteCheckedId">
+    delete from tbl_dic_value
+    where id in
+    <foreach collection="array" separator="," open="(" close=")"  item="id" >
+      #{id}
+    </foreach>
+  </delete>
 </mapper>
