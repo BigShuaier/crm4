@@ -2,6 +2,7 @@ package com.bjpowernode.crm.settings.mapper;
 
 import com.bjpowernode.crm.settings.domain.User;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserMapper {
@@ -20,4 +21,6 @@ public interface UserMapper {
     User queryUserByloginActAndPwd(Map<String, Object> paramMap);
 
     User queryUserByloginAct(String loginAct);
+
+    List<User> selectqueryAllUserList();
 }

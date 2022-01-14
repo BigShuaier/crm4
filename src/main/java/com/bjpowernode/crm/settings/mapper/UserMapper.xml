@@ -194,4 +194,8 @@
     from tbl_user
     where login_act=#{loginAct}
   </select>
+  <select id="selectqueryAllUserList" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from tbl_user
+  </select>
 </mapper>

@@ -15,11 +15,11 @@
     <result column="edit_by" jdbcType="VARCHAR" property="editBy" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, owner, name, start_date, end_date, cost, description, create_time, create_by, 
+    id, owner, name, start_date, end_date, cost, description, create_time, create_by,
     edit_time, edit_by
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from tbl_activity
     where id = #{id,jdbcType=CHAR}
@@ -29,13 +29,13 @@
     where id = #{id,jdbcType=CHAR}
   </delete>
   <insert id="insert" parameterType="com.bjpowernode.crm.workbench.domain.Activity">
-    insert into tbl_activity (id, owner, name, start_date, 
-      end_date, cost, description, 
-      create_time, create_by, edit_time, 
+    insert into tbl_activity (id, owner, name, start_date,
+      end_date, cost, description,
+      create_time, create_by, edit_time,
       edit_by)
-    values (#{id,jdbcType=CHAR}, #{owner,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{startDate,jdbcType=CHAR}, 
-      #{endDate,jdbcType=CHAR}, #{cost,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=CHAR}, #{createBy,jdbcType=VARCHAR}, #{editTime,jdbcType=CHAR}, 
+    values (#{id,jdbcType=CHAR}, #{owner,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{startDate,jdbcType=CHAR},
+      #{endDate,jdbcType=CHAR}, #{cost,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+      #{createTime,jdbcType=CHAR}, #{createBy,jdbcType=VARCHAR}, #{editTime,jdbcType=CHAR},
       #{editBy,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.bjpowernode.crm.workbench.domain.Activity">
@@ -161,4 +161,63 @@
       edit_by = #{editBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=CHAR}
   </update>
+<select id="selectActivityListForPageByCondition" resultMap="BaseResultMap">
+select a.id, u.name as owner,a.name,a.start_date,a.end_date,
+a.cost, a.description,
+  a.create_time, a.create_by, a.edit_time,
+  a.edit_by
+from tbl_activity a
+left join tbl_user u
+on a.owner =u.id
+<where>
+  <if test="activityName!=null and activityName!=''">
+    and a.name like '%' #{activityName} '%'
+  </if>
+  <if test="ownerName!=null and ownerName !=''">
+    and u.name like '%' #{ownerName} '%'
+  </if>
+  <if test="startDate!=null and startDate!=''">
+    and a.start_date &gt;= #{startDate}
+  </if>
+  <if test="endDate!=null and endDate!=''">
+    and a.end_date &lt;=#{endDate}
+  </if>
+</where>
+order  by a.start_date
+limit #{pageNo},#{pageSize}
+</select>
+  <!--/*查询总条数*/-->
+  <select id="selectTotal" resultType="java.lang.Integer">
+    select
+    count(a.id)
+    from tbl_activity a
+    left join tbl_user u
+    on a.owner =u.id
+    <where>
+      <if test="activityName!=null and activityName!=''">
+        and a.name like '%' #{activityName} '%'
+      </if>
+      <if test="ownerName!=null and ownerName !=''">
+        and u.name like '%' #{ownerName} '%'
+      </if>
+      <if test="startDate!=null and startDate!=''">
+        and a.start_date &gt;= #{startDate}
+      </if>
+      <if test="endDate!=null and endDate!=''">
+        and a.end_date &lt;=#{endDate}
+      </if>
+    </where>
+  </select>
+  <delete id="deleteActivityByIds">
+    delete from tbl_activity
+    where id in
+   <foreach collection="array" open="(" close=")" separator="," item="id">
+     #{id}
+   </foreach>
+  </delete>
+  <select id="selectAllAcitivity" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List">
+  </include>
+    from tbl_activity
+  </select>
 </mapper>

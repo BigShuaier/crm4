@@ -42,4 +42,5 @@ public class Result extends HashMap<String,Object> {
         result.put(Contant.RETURN_DATA,object);
         return result;
     }
+
 }
