@@ -26,4 +26,6 @@ public interface ActivityMapper {
     int deleteActivityByIds(String[] id);
 
     List<Activity> selectAllAcitivity();
+
+    int insertActivityList(List<Activity> activityList);
 }

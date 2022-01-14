@@ -20,7 +20,7 @@
           浏览器每次向后台发送请求，都会对所有的参数进行统一编码，默认采用的编码格式是application/x-www-form-urlencoded；urlencoded这种编码格式只能对文本进行编码，所以，浏览器会首先把所有参数统一转换成文本数据，然后再进行urlencoded编码。
           文件上传的表单，只能采用multipart/form-data编码格式。
 -->
-<form action="workbench/activity/fileUpload.do" method="post" enctype="multipart/form-data">
+<form action="workbench/Activity/fileUpLoad.do" method="post" enctype="multipart/form-data">
     <input type="file" name="myFile"><br>
     <input type="text" name="username"><br>
     <input type="submit" value="提交">

@@ -207,6 +207,57 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		$("#exportActivityAllBtn").on("click",function () {
 			window.location.href="workbench/activity/exportActivityAll.do"
 		})
+		$("#importActivityListBtn").on("click",function () {
+
+			$("#importActivityModal").modal("show")
+
+		})
+		//给导入按钮创建单击事件
+		$("#importActivityBtn").on("click",function () {
+			//获取文件名称
+			var allPathFileName=$("#activityFile").val().toString()
+
+			//获取文件名后缀
+			var suffix=allPathFileName.substring(allPathFileName.lastIndexOf(".")+1).toLowerCase()
+
+			//判断文件类型
+			if(suffix!="xls"){
+				alert("仅支持xls结尾的文件")
+				return
+			}
+			//判断文件大小
+			var upLoadFileSize=$("#activityFile")[0].files[0].size
+			//验证文件的大小不能超过5M
+			if(upLoadFileSize>(1024*1024*5)){
+				alert("上传文件不能超过5M")
+				return
+			}
+
+			//创建js的form对象
+			var form =new FormData()
+
+			//获取上传文件对象
+			var upLoadFileObject=$("#activityFile")[0].files[0]
+			form.append("activityFile", upLoadFileObject)
+			//alert(form)
+			//发送ajax请求
+			$.ajax({
+				url:"workbench/activity/importActivity.do",
+				type:"post",
+				data:form,
+				processData:false,
+				contentType:false,
+				success:function (data) {
+					if(data.code==1){
+						alert("您成功添加了"+data.data+"条数据")
+						$("#importActivityModal").modal("hide")
+						queryActivityListForPageByCondition(1,$("#demo_pag1").bs_pagination("getOption","rowPerPage"))
+					}else {
+						data.message
+					}
+				}
+			})
+		})
 	});
 	//多条件分页查询市场活动列表数据
 	function queryActivityListForPageByCondition(pageNo,pageSize) {
