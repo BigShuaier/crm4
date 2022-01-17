@@ -129,12 +129,14 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					$("#edit-endDate").val(data.activity.endDate)
 					$("#edit-cost").val(data.activity.cost)
 					$("#edit-description").val(data.activity.description)
+					$("#edit-id").val(data.activity.id)
 
 					$("#editActivityModal").modal("show")
 				}
 			})
 		//给更新按钮添加一个单机事件
 		$("#saveEditActivityBtn").on("click",function () {
+			//
 			//获取所有的值
 			var owner=$.trim($("#edit-marketActivityOwner").val())
 			if(owner==""){
@@ -148,14 +150,16 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				alert("名称不能为空")
 				return
 			}
+			var id=$.trim($("#edit-id").val())
 			var cost=$.trim($("#edit-cost").val())
 			var startDate=$.trim($("#edit-startDate").val())
 			var endDate=$.trim($("#edit-endDate").val())
 			var description=$.trim($("#edit-description").val())
 			$.ajax({
-				url:"workbench/activity/editActivity.do",
+				url:"workbench/activity/saveEditActivity.do",
 				type:"post",
 				data:{
+					id:id,
 					name:name,
 					owner:owner,
 					startDate:startDate,
@@ -165,8 +169,8 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				},
 				success:function (data) {
 					if(data.code==1){
-						alert("添加成功")
-						$("#createActivityModal").modal("hide")
+						alert("更新成功")
+						$("#editActivityModal").modal("hide")
 						queryActivityListForPageByCondition(1,$("#demo_pag1").bs_pagination("getOption","rowsPerPage"))
 					}
 				}
@@ -204,9 +208,11 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				}
 			})
 		})
+		//批量导出
 		$("#exportActivityAllBtn").on("click",function () {
 			window.location.href="workbench/activity/exportActivityAll.do"
 		})
+		//打开批量导出模态窗口
 		$("#importActivityListBtn").on("click",function () {
 
 			$("#importActivityModal").modal("show")
@@ -258,6 +264,34 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				}
 			})
 		})
+		//给选择导出窗口添加单击事件
+		$("#exportActivityXzBtn").on("click",function () {
+			var checkeds=$("#tBody input[type=checkbox]:checked")
+			if(checkeds.size()==0){
+				alert("请选择要导出的数据")
+				return
+			}
+			var ids=""
+			//编写请求参数字符串
+			$.each(checkeds,function (index,item) {
+				ids+="id="+$(item).val()+"&"
+			})
+			ids=ids.substring(0,ids.length-1)
+			//发起请求
+			window.location.href="workbench/activity/exportActivityXz.do?"+ids
+			/*$.ajax({
+				url:"",
+				type:"get",
+				data:ids,
+				success:function (data) {
+					if(data.code==1){
+						alert("导出成功")
+					}else {
+						data.message
+					}
+				}
+			})*/
+		})
 	});
 	//多条件分页查询市场活动列表数据
 	function queryActivityListForPageByCondition(pageNo,pageSize) {
@@ -283,7 +317,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					$.each(data.activityList,function(index,item){
 						htmlStr+="<tr class=\"active\">"
 						htmlStr+="<td><input type=\"checkbox\" value=\""+item.id+"\"/></td>"
-						htmlStr+="<td><a style=\"text-decoration: none; cursor: pointer\"; onclick=\"window.location.href='detail.jsp';\">"+item.name+"</a></td>"
+						htmlStr+="<td><a style=\"text-decoration: none; cursor: pointer\"; onclick=\"window.location.href='workbench/activity/detail.do?id="+item.id+"';\">"+item.name+"</a></td>"
 						htmlStr+="<td>"+item.owner+"</td>"
 						htmlStr+="<td>"+item.startDate+"</td>"
 						htmlStr+="<td>"+item.endDate+"</td>"

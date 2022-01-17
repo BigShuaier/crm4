@@ -36,4 +36,8 @@ public class Contant {
      * 成功数据
      */
     public static final String RETURN_DATA="data";
+    /**
+     *用户session
+     */
+    public static final String SESSION_USER="sessionUser";
 }

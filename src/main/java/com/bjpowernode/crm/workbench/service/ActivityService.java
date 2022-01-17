@@ -31,4 +31,10 @@ public interface ActivityService {
     List<Activity> queryAllActList();
 
     int saveCreateActivityList(List<Activity> activityList);
+
+    Activity queryActivitById(String id);
+
+    int saveActivityById(Activity activity);
+
+    List<Activity> queryActivitList(String[] id);
 }

@@ -28,4 +28,8 @@ public interface ActivityMapper {
     List<Activity> selectAllAcitivity();
 
     int insertActivityList(List<Activity> activityList);
+
+    Activity selectActivityById(String id);
+
+    List<Activity > selectListByPrimaryKey(String[] id);
 }

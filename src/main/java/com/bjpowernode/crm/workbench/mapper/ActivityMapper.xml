@@ -222,19 +222,40 @@ limit #{pageNo},#{pageSize}
   </select>
   <!--批量新增市场活动-->
   <insert id="insertActivityList" >
-    insert into
-    tbl_activity (id, owner, name, start_date,
-      end_date, cost, description,
-      create_time, create_by, edit_time,
-      edit_by)
+    insert into tbl_activity (id, owner, name, start_date, end_date, cost, description, create_time, create_by, edit_time, edit_by)
     values
-    <foreach collection="list"  separator="," item="obj">
+    <foreach collection="list" separator="," item="obj">
       (#{obj.id,jdbcType=CHAR}, #{obj.owner,jdbcType=CHAR}, #{obj.name,jdbcType=VARCHAR}, #{obj.startDate,jdbcType=CHAR},
       #{obj.endDate,jdbcType=CHAR}, #{obj.cost,jdbcType=VARCHAR}, #{obj.description,jdbcType=VARCHAR},
       #{obj.createTime,jdbcType=CHAR}, #{obj.createBy,jdbcType=VARCHAR}, #{obj.editTime,jdbcType=CHAR},
       #{obj.editBy,jdbcType=VARCHAR})
     </foreach>
   </insert>
+  <select id="selectActivityById" resultMap="BaseResultMap">
+    select act.id, u.name as owner, act.name, act.start_date,
+      act.end_date, act.cost, act.description,
+      act.create_time, u1.name as create_by , act.edit_time,
+      u2.name as edit_by
+      from tbl_activity act
+      left join
+      tbl_user u
+      on act.owner=u.id
+      left join
+      tbl_user u1
+      on act.create_by=u1.id
+      left join
+      tbl_user u2
+      on act.edit_by =u2.id
+      where
+      act.id=#{id}
+  </select>
+  <select id="selectListByPrimaryKey" resultMap="BaseResultMap">
+    select * from tbl_activity
+    where id in
+    <foreach collection="array" separator="," open="(" close=")" item="id">
+      #{id}
+    </foreach>
+  </select>
 </mapper>
 
 

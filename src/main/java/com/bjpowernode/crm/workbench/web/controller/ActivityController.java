@@ -6,12 +6,15 @@ package com.bjpowernode.crm.workbench.web.controller;/**
  * author:gu@15840026792
  */
 
+import com.bjpowernode.crm.commons.contants.Contant;
 import com.bjpowernode.crm.commons.utils.DateUtils;
 import com.bjpowernode.crm.commons.utils.PageinationVO;
 import com.bjpowernode.crm.commons.utils.Result;
 import com.bjpowernode.crm.commons.utils.UUIDUtils;
 import com.bjpowernode.crm.settings.domain.User;
 import com.bjpowernode.crm.settings.service.UserService;
+import com.bjpowernode.crm.workbench.domain.ActivityRemark;
+import com.bjpowernode.crm.workbench.service.ActivityRemarkService;
 import com.bjpowernode.crm.workbench.service.ActivityService;
 import com.bjpowernode.crm.workbench.domain.Activity;
 import org.apache.commons.fileupload.FileUpload;
@@ -44,8 +47,9 @@ public class ActivityController {
     @Autowired
     private ActivityService activityService;
     @Autowired
-    UserService userService;
+    private UserService userService;
     @Autowired
+   private ActivityRemarkService activityRemarkService;
     @RequestMapping("workbench/activity/index.do")
     public String index(){
         return "workbench/activity/index";
@@ -121,6 +125,28 @@ public class ActivityController {
         retMap.put("activity", activity);
         return retMap;
     }
+    //保存编辑
+    @ResponseBody
+    @RequestMapping("workbench/activity/saveEditActivity.do")
+    public Object saveEditActivity(Activity activity,HttpServletRequest request){
+        User attribute = (User)request.getSession().getAttribute(Contant.SESSION_USER);
+        activity.setEditBy(attribute.getId());
+        activity.setEditTime(DateUtils.formatDateTime(new Date()));
+        try {
+            int count =activityService.saveActivityById(activity);
+            if(count!=1){
+               return Result.fail("更新失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.fail("更新失败");
+        }
+        return Result.success();
+    }
+
+
+
+
     @ResponseBody
     @RequestMapping("workbench/activity/deleteActivityById.do")
     public Object deleteActivityById(String []id){
@@ -210,6 +236,63 @@ public class ActivityController {
     }
 
 
+    //选择导出
+    @RequestMapping("workbench/activity/exportActivityXz.do")
+    public void exportActivityXz(String []id,HttpServletRequest request,HttpServletResponse response) throws IOException {
+        List<Activity > activityList= activityService.queryActivitList(id);
+        HSSFWorkbook wb=new HSSFWorkbook();
+        //创建工作页
+        HSSFSheet sheet = wb.createSheet();
+        //创建行
+        HSSFRow row = sheet.createRow(0);
+        //第一个单元格
+        HSSFCell cell = row.createCell(0);
+        cell.setCellValue("市场活动名称");
+        //第二个单元格
+         cell = row.createCell(1);
+         cell.setCellValue("成本");
+         //第三个单元格
+        cell=row.createCell(2);
+        cell.setCellValue("开始日期");
+        //第四个单元格
+        cell=row.createCell(3);
+        cell.setCellValue("结束日期");
+        for (int i = 1; i <activityList.size(); i++) {
+             row = sheet.createRow(i+1);
+            //第一个单元格
+            cell = row.createCell(0);
+            cell.setCellValue(activityList.get(i).getName());
+            //第二个单元格
+            cell = row.createCell(1);
+            cell.setCellValue(activityList.get(i).getCost());
+            //第三个单元格
+            cell=row.createCell(2);
+            cell.setCellValue(activityList.get(i).getStartDate());
+            //第四个单元格
+            cell=row.createCell(3);
+            cell.setCellValue(activityList.get(i).getEndDate());
+        }
+        //设置中文文件名称
+        String fileName = URLEncoder.encode("市场活动列表","UTF-8");
+
+        //浏览器默认服务器传过去的是html，不是excel文件
+        //设置响应类型:传输内容是流，并支持中文
+        response.setContentType("application/octet-stream;charset=UTF-8");
+
+        //设置响应头信息header，下载时以文件附件下载
+        response.setHeader("Content-Disposition","attachment;filename="+fileName+".xls");
+
+        //输出流对象
+        OutputStream os = response.getOutputStream();
+        wb.write(os);
+
+        //强制刷新
+        os.flush();
+        os.close();
+        wb.close();
+
+    }
+
     @ResponseBody
     @RequestMapping("workbench/activity/importActivity.do")
     public Object importActivity(HttpServletRequest request,MultipartFile activityFile) throws Exception {
@@ -220,17 +303,18 @@ public class ActivityController {
             //从工作簿中获取工作测
             HSSFSheet sheet = wb.getSheetAt(0);
             //创建行
-            HSSFRow row ;
+            HSSFRow row =null;
             //获取第一个单元格
-            HSSFCell cell ;
+            HSSFCell cell=null ;
             int lastRowNum=sheet.getLastRowNum();
             List<Activity> activityList=new ArrayList<>();
             Activity activity=null;
+            User user = (User)request.getSession().getAttribute(Contant.SESSION_USER);
             for (int i = 1; i <=lastRowNum ; i++) {
                 activity= new Activity();
                 activity.setId(UUIDUtils.getUUID());
                 activity.setCreateTime(DateUtils.formatDateTime(new Date()));
-                activity.setCreateBy(request.getSession().getId());
+                activity.setCreateBy(user.getId());
                 //获取当前行对象
                 row=sheet.getRow(i);
 
@@ -244,11 +328,11 @@ public class ActivityController {
                 String cost =cell.getStringCellValue();
                 activity.setCost(cost);
                 //获取当前行的第三个单元格
-                cell=row.getCell(1);
+                cell=row.getCell(2);
                 String startDate =cell.getStringCellValue();
                 activity.setStartDate(startDate);
                 //获取当前行的第四个单元格
-                cell=row.getCell(1);
+                cell=row.getCell(3);
                 String endDate=cell.getStringCellValue();
                 activity.setEndDate(endDate);
                 activityList.add(activity);
@@ -262,5 +346,77 @@ public class ActivityController {
             return Result.fail("添加失败");
         }
         return Result.success(count);
+    }
+    @RequestMapping("workbench/activity/detail.do")
+    public String detail(String id,HttpServletRequest request){
+        Activity activity = activityService.queryActivitById(id);
+        request.setAttribute("activity", activity);
+        return "workbench/activity/detail";
+    }
+    @ResponseBody
+    @RequestMapping("workbench/activity/detail/queryAcivityRemarkListByRemarkId.do")
+    public Object queryAcivityRemarkListByRemarkId(String activityId){
+     List<ActivityRemark> activityRemarkList=   activityRemarkService.queryAcivityRemarkListByRemarkId(activityId);
+        return activityRemarkList;
+    }
+    @ResponseBody
+    @RequestMapping("workbench/activity/detail/updateRemark.do")
+    public Object updateRemark(String remarkId,String noteContent,HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("sessionUser");
+        ActivityRemark activityRemark= new ActivityRemark();
+        activityRemark.setId(remarkId);
+        activityRemark.setNoteContent(noteContent);
+        activityRemark.setEditBy( user.getId());
+        activityRemark.setEditTime(DateUtils.formatDateTime(new Date()));
+        try {
+            int count = activityRemarkService.updateRemark(activityRemark);
+            if(count!=1){
+                return Result.fail("更新失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.fail("更新失败");
+        }
+
+        return Result.success();
+    }
+    @ResponseBody
+    @RequestMapping("workbench/activity/detail/removeActivityRemark.do")
+    public Object removeActivityRemark(String id){
+        int count= 0;
+        try {
+            count = activityRemarkService.deleteActivityRemark(id);
+            if(count==0){
+                Result.fail("删除失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Result.fail("删除失败");
+        }
+        return Result.success(count);
+    }
+    @ResponseBody
+    @RequestMapping("workbench/activity/detail/saveCreateRemark.do")
+    public Object saveCreateRemark(String remark,String activityId,HttpServletRequest request){
+        //完善对象信息
+        User user = (User) request.getSession().getAttribute("sessionUser");
+        ActivityRemark activityRemark =new ActivityRemark();
+        activityRemark.setId(UUIDUtils.getUUID());
+        activityRemark.setNoteContent(remark);
+        activityRemark.setCreateBy(user.getId());
+        activityRemark.setCreateTime(DateUtils.formatDateTime(new Date()));
+        activityRemark.setActivityId(activityId);
+        activityRemark.setNoteContent(remark);
+
+        try {
+            int count = activityRemarkService.saveCreateRemark(activityRemark);
+            if(count!=1){
+                Result.fail("添加失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Result.fail("添加失败");
+        }
+        return Result.success();
     }
 }

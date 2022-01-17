@@ -16,7 +16,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 
 	//默认情况下取消和保存按钮是隐藏的
 	var cancelAndSaveBtnDefault = true;
-	
+
 	$(function(){
 		$("#remark").focus(function(){
 			if(cancelAndSaveBtnDefault){
@@ -46,14 +46,122 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		$("#remarkDivList").on("mouseout",".myHref",function () {
             $(this).children("span").css("color","#E6E6E6");
         });
+		//根据市场活动标识获取备注列表信息
+		queryAcivityRemarkListByRemarkId()
+		//给备注更新按钮绑定一个单击事件
+		$("#updateRemarkBtn").on("click",function () {
 
+			var noteContent=$("#edit-noteContent").val()
+			var remarkId=$("#remarkId").val()
+			$.ajax({
+				url:"workbench/activity/detail/updateRemark.do",
+				type:"get",
+				data:{
+					noteContent:noteContent,
+					remarkId:remarkId
+				},
+				success:function(data){
+					if(data.code==1){
+						alert("更新成功")
+						$("#editRemarkModal").modal("hide")
+						queryAcivityRemarkListByRemarkId()
+					}else {
+						alert(data.message)
+					}
+
+				}
+			})
+		})
+		var activityId="${activity.id}";
+		$("#saveCreateRemarkBtn").on("click",function () {
+			var remark=$("#remark").val()
+			if(remark==""){
+				alert("请添加备注之后再提交")
+				return
+			}else {
+				$.ajax({
+					url:"workbench/activity/detail/saveCreateRemark.do",
+					type:"get",
+					data:{
+						remark:remark,
+						activityId:activityId
+					},
+					success:function (data) {
+						if(data.code==1){
+							queryAcivityRemarkListByRemarkId()
+							$("#remark").val("")
+						}else{
+							alert("添加失败")
+						}
+					}
+				})
+			}
+
+		})
 	});
-	
+	//根据市场活动标识获取备注列表信息
+	function queryAcivityRemarkListByRemarkId(){
+		var activityId="${activity.id}";
+
+		var htmlStr=""
+		$.ajax({
+			url:"workbench/activity/detail/queryAcivityRemarkListByRemarkId.do",
+			type:"get",
+			data:{
+				activityId:activityId
+			},
+			success:function (data) {
+				var activityName="${activity.name}"
+				$.each(data,function (index,item) {
+					htmlStr+="<div class=\"remarkDiv\" style=\"height: 60px;\">"
+					htmlStr+="<img title="+item.createBy+" src=\"image/user-thumbnail.png\" style=\"width: 30px; height:30px;\">"
+					htmlStr+="<div style=\"position: relative; top: -40px; left: 40px;\" >"
+					htmlStr+="<h5>"+item.noteContent+"</h5>"
+					htmlStr+="<font color=\"gray\">市场活动</font> <font color=\"gray\">-</font> <b>"+activityName+"</b> <small style=\"color: gray;\"> "+item.createTime+"由"+item.createBy+"</small>"
+					htmlStr+="<div style=\"position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;\">"
+					htmlStr+="<a class=\"myHref\" onclick=\"editActivityReMarkPage('"+item.id+"','"+item.noteContent+"')\"><span class=\"glyphicon glyphicon-edit\" style=\"font-size: 20px; color: #E6E6E6;\"></span></a>"
+					htmlStr+="&nbsp;&nbsp;&nbsp;&nbsp;"
+					htmlStr+="<a class=\"myHref\" onclick= \"removeActivityReMark('"+item.id+"')\"><span class=\"glyphicon glyphicon-remove\" style=\"font-size: 20px; color: #E6E6E6;\"></span></a>"
+					htmlStr+="</div>"
+					htmlStr+="</div>"
+					htmlStr+="</div>"
+				})
+				$("#remarks").html(htmlStr)
+
+			}
+		})
+	}
+	//跳转至市场活动备注编辑页面
+	function editActivityReMarkPage(id,noteContent){
+		$("#remarkId").val(id)
+		$("#edit-noteContent").val(noteContent)
+		$("#editRemarkModal").modal("show")
+	}
+	function removeActivityReMark(id) {
+		if(confirm("您确定要删除该条备注?")){
+			$.ajax({
+				url:'workbench/activity/detail/removeActivityRemark.do',
+				type:"get",
+				data:{
+					id:id
+				},
+				success:function (data) {
+					if(data.code==1){
+						alert("您成功删除了"+data.data+"条备注")
+						queryAcivityRemarkListByRemarkId()
+					}else{
+						alert(data.message)
+
+					}
+				}
+			})
+		}
+	}
 </script>
 
 </head>
 <body>
-	
+
 	<!-- 修改市场活动备注的模态窗口 -->
 	<div class="modal fade" id="editRemarkModal" role="dialog">
 		<%-- 备注的id --%>
@@ -85,21 +193,21 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
         </div>
     </div>
 
-    
+
 
 	<!-- 返回按钮 -->
 	<div style="position: relative; top: 35px; left: 10px;">
 		<a href="javascript:void(0);" onclick="window.history.back();"><span class="glyphicon glyphicon-arrow-left" style="font-size: 20px; color: #DDDDDD"></span></a>
 	</div>
-	
+
 	<!-- 大标题 -->
 	<div style="position: relative; left: 40px; top: -30px;">
 		<div class="page-header">
 			<h3>市场活动-${activity.name} <small>${activity.startDate} ~ ${activity.endDate}</small></h3>
 		</div>
-		
+
 	</div>
-	
+
 	<br/>
 	<br/>
 	<br/>
@@ -148,7 +256,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			<div style="height: 1px; width: 850px; background: #D5D5D5; position: relative; top: -20px;"></div>
 		</div>
 	</div>
-	
+
 	<!-- 备注 -->
 	<div id="remarkDivList" style="position: relative; top: 30px; left: 40px;">
 		<div class="page-header">
@@ -156,33 +264,9 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		</div>
 
         <div id="remarks">
-			<!-- 备注1 -->
-			<div class="remarkDiv" style="height: 60px;">
-				<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
-				<div style="position: relative; top: -40px; left: 40px;" >
-					<h5>哎呦！</h5>
-					<font color="gray">市场活动</font> <font color="gray">-</font> <b>发传单</b> <small style="color: gray;"> 2017-01-22 10:10:10 由zhangsan</small>
-					<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
-						<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
-					</div>
-				</div>
-			</div>
 
-			<!-- 备注2 -->
-			<div class="remarkDiv" style="height: 60px;">
-				<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
-				<div style="position: relative; top: -40px; left: 40px;" >
-					<h5>呵呵！</h5>
-					<font color="gray">市场活动</font> <font color="gray">-</font> <b>发传单</b> <small style="color: gray;"> 2017-01-22 10:20:10 由zhangsan</small>
-					<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
-						<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
-					</div>
-				</div>
-			</div>
+
+
 
 		</div>
 
