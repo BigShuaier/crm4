@@ -101,8 +101,8 @@
     where
     value = #{value}
   </select>
-  <select id="selectByPrimaryKey1" resultMap="BaseResultMap">
-    select v.id, v.value, v.text, v.order_no, t.name as type_code
+  <select id="selectByPrimaryKey1" resultType="com.bjpowernode.crm.settings.domain.DicValueExt">
+    select v.id, v.value, v.text, v.order_no, t.name as type_code ,type_code as code
     from tbl_dic_value v
     left join tbl_dic_type t
     on v.type_code=t.code

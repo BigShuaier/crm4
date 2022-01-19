@@ -129,5 +129,21 @@ public class ClueController {
         }
         return Result.success();
     }
+    @RequestMapping("workbench/clue/deleteClue.do")
+    public @ResponseBody Object deleteClue(@RequestParam(value = "id",required = true)String id[]){
+        int count= 0;
+        try {
+            count = clueService.deleteClue(id);
+            if(count==0){
+                return Result.fail("删除失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.fail("删除失败");
+        }
+        return Result.success(count);
+    }
+
+
 
 }

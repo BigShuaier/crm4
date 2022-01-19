@@ -50,9 +50,8 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					return;
 				}
 				var id=checked.val()
-				var typeCode=checked.attr("name")
 
-				window.location.href="settings/dictionary/value/index/editDicValue.do?id="+id+"&typeCode="+typeCode
+				window.location.href="settings/dictionary/value/index/editDicValue.do?id="+id
 			})
 		}
 		function deleteDicValue() {
@@ -72,7 +71,6 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				})
 				ids=ids+typeCodes
 				ids=ids.substring(0,ids.length-1)
-				alert(ids)
 				//异步请求
 				$.ajax({
 					url:"settings/dictionary/value/index/deleteDicValue.do",

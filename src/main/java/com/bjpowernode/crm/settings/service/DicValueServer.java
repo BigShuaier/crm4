@@ -8,6 +8,7 @@ package com.bjpowernode.crm.settings.service;/**
 
 
 import com.bjpowernode.crm.settings.domain.DicValue;
+import com.bjpowernode.crm.settings.domain.DicValueExt;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public interface DicValueServer {
 
     int saveDicValue(DicValue dicValue);
 
-    DicValue qureyDicType(String id);
+    DicValueExt qureyDicType(String id);
 
     int saveEditDicValue(DicValue dicValue);
 
@@ -34,5 +35,5 @@ public interface DicValueServer {
      */
     List<DicValue> queryAllDicValueclueStateByTypeCode(String typecode);
 
-    String queryDicTypeCode(String id);
+
 }

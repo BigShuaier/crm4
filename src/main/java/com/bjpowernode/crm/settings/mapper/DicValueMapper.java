@@ -2,6 +2,7 @@ package com.bjpowernode.crm.settings.mapper;
 
 import com.bjpowernode.crm.settings.domain.DicType;
 import com.bjpowernode.crm.settings.domain.DicValue;
+import com.bjpowernode.crm.settings.domain.DicValueExt;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface DicValueMapper {
 
     List<DicValue> queryAllDicValue();
 
-    DicValue selectByPrimaryKey1(String id);
+    DicValueExt selectByPrimaryKey1(String id);
 
     int deleteCheckedId(String[] id);
 

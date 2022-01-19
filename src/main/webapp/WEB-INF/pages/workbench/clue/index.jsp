@@ -88,7 +88,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 
 			var appellation=$("#create-appellation").val()
 
-			/*$("#createClueModal").modal("hide")*/
+
 
 
 			$.ajax({
@@ -248,9 +248,35 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				}
 			})
 		})
+		//给删除按钮绑定一个单击事件
+		$("#deleteClueBtn").on("click",function () {
+			var checkeds=$("#tBody input[type=checkbox]:checked")
+			if(checkeds.size()==0){
+				alert("请选择要删除的数据")
+				return
+			}
+			var ids=""
+			$.each(checkeds,function (index,item) {
+				ids+="id="+$(item).val()+"&"
+			})
+			$.ajax({
+				url:"workbench/clue/deleteClue.do",
+				type:"post",
+				data:ids,
+				success:function (data) {
+					if(data.code==1){
+						alert("您成功删除了"+data.data+"条数据")
+						queryClueListForPageByCondition(1,$("#demo_pag1").bs_pagination("getOption","rowsPerPage"))
+					}else {
+						data.message
+					}
+				}
+			})
+		})
 	});
 	//多条件分页查询市场活动列表数据
 	function queryClueListForPageByCondition(pageNo,pageSize){
+		$("#chkedAll").prop("checked",false)
 		var name=$.trim($("#query-name").val())
 		var company=$.trim($("#query-company").val())
 		var phone=$.trim($("#query-phone").val())
@@ -687,7 +713,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createClueModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" data-toggle="modal" id="editClueBtn"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-danger" id="deleteClueBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 
 

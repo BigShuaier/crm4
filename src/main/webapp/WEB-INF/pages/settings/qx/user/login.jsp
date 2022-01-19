@@ -11,11 +11,8 @@
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-$(function () {
-	//给"登录"按钮添加单击事件
-	/*$("#loginBtn").click(function () {
-		window.location.href="workbench/index.do";
-	});*/
+
+	$(function(){
 	$("#loginBtn").on("click",function () {
 		var loginAct=$.trim($("#loginAct").val())
 		var loginPwd=$.trim($("#loginPwd").val())

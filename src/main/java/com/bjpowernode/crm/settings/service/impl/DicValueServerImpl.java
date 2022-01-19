@@ -9,6 +9,7 @@ package com.bjpowernode.crm.settings.service.impl;/**
 import com.bjpowernode.crm.commons.utils.DateUtils;
 import com.bjpowernode.crm.commons.utils.UUIDUtils;
 import com.bjpowernode.crm.settings.domain.DicValue;
+import com.bjpowernode.crm.settings.domain.DicValueExt;
 import com.bjpowernode.crm.settings.mapper.DicValueMapper;
 import com.bjpowernode.crm.settings.service.DicValueServer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class DicValueServerImpl implements DicValueServer {
     }
 
     @Override
-    public DicValue qureyDicType(String id) {
+    public DicValueExt qureyDicType(String id) {
 
         return dicValueMapper.selectByPrimaryKey1(id);
     }
@@ -91,8 +92,5 @@ public class DicValueServerImpl implements DicValueServer {
         return dicValues;
     }
 
-    @Override
-    public String queryDicTypeCode(String id) {
-        return dicValueMapper.selectDicTypeCode(id);
-    }
+
 }

@@ -26,4 +26,11 @@ public interface ClueService {
     Clue queryClueById(String id);
 
     int saveUpdateClue(Clue clue);
+
+    /**
+     * 批量删除线索记录
+     * @param id
+     * @return
+     */
+    int deleteClue(String[] id);
 }

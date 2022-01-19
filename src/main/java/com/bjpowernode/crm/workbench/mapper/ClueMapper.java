@@ -21,4 +21,6 @@ public interface ClueMapper {
     List<Clue> selectClueListForPageByCondition(Map<String, Object> pramMap);
 
     Integer selectClueTotals();
+
+    int deleteByIds(String[] id);
 }

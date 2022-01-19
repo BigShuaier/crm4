@@ -8,6 +8,7 @@ package com.bjpowernode.crm.settings.web.controller;/**
 
 import com.bjpowernode.crm.commons.utils.Result;
 import com.bjpowernode.crm.settings.domain.DicValue;
+import com.bjpowernode.crm.settings.domain.DicValueExt;
 import com.bjpowernode.crm.settings.domain.User;
 import com.bjpowernode.crm.settings.service.DicValueServer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,9 +73,8 @@ public class DicTypeValueController {
 
     //修改字典值
     @RequestMapping("settings/dictionary/value/index/editDicValue.do")
-    public String editDicValue(String id, HttpServletRequest request,String typeCode) {
-        DicValue dicValue = dicValueServer.qureyDicType(id);
-        request.setAttribute("typeCode", typeCode);
+    public String editDicValue(String id, HttpServletRequest request) {
+        DicValueExt dicValue = dicValueServer.qureyDicType(id);
         request.getSession().setAttribute("dicValue", dicValue);
         return "settings/dictionary/value/edit";
     }
