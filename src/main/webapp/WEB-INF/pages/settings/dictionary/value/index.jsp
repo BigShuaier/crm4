@@ -26,7 +26,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					var htmlStr=""
 					$.each(data,function (index,item) {
 						htmlStr+="<tr class=\"active\">"
-						htmlStr+="<td><input type=\"checkbox\" value="+item.id+"></td>"
+						htmlStr+="<td><input type=\"checkbox\"  name=\""+item.typeCode+"\" value="+item.id+"></td>"
 						htmlStr+="<td>"+(index+1)+"</td>"
 						htmlStr+="<td>"+item.value+"</td>"
 						htmlStr+="<td>"+item.text+"</td>"
@@ -50,7 +50,9 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					return;
 				}
 				var id=checked.val()
-				window.location.href="settings/dictionary/value/index/editDicValue.do?id="+id
+				var typeCode=checked.attr("name")
+
+				window.location.href="settings/dictionary/value/index/editDicValue.do?id="+id+"&typeCode="+typeCode
 			})
 		}
 		function deleteDicValue() {
@@ -63,10 +65,14 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				}
 				//将选中的记录的id遍历拼接成字符串
 				var ids=""
+				var typeCodes=""
 				$.each(checkeds,function (index,item) {
+					typeCodes+="typeCode="+$(item).attr("name")+"&"
 					ids+="id="+$(item).val()+"&"
 				})
+				ids=ids+typeCodes
 				ids=ids.substring(0,ids.length-1)
+				alert(ids)
 				//异步请求
 				$.ajax({
 					url:"settings/dictionary/value/index/deleteDicValue.do",

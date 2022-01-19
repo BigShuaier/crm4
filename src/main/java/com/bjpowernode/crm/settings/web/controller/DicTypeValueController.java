@@ -11,6 +11,8 @@ import com.bjpowernode.crm.settings.domain.DicValue;
 import com.bjpowernode.crm.settings.domain.User;
 import com.bjpowernode.crm.settings.service.DicValueServer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,8 +72,9 @@ public class DicTypeValueController {
 
     //修改字典值
     @RequestMapping("settings/dictionary/value/index/editDicValue.do")
-    public String editDicValue(String id, HttpServletRequest request) {
+    public String editDicValue(String id, HttpServletRequest request,String typeCode) {
         DicValue dicValue = dicValueServer.qureyDicType(id);
+        request.setAttribute("typeCode", typeCode);
         request.getSession().setAttribute("dicValue", dicValue);
         return "settings/dictionary/value/edit";
     }
@@ -94,10 +97,11 @@ public class DicTypeValueController {
 
     @ResponseBody
     @RequestMapping("settings/dictionary/value/index/deleteDicValue.do")
-    public Object deleteDicValue(@RequestParam(value = "id",required = true)String []id){
+    public Object deleteDicValue(@RequestParam(value = "id",required = true)String []id,
+    @RequestParam( value="typeCode", required =true)String []code){
             int count=0;
             try {
-                count=dicValueServer.deleteDicValue(id);
+                count=dicValueServer.deleteDicValue(id,code);
                 if(count==0){
                     return Result.fail("删除失败");
                 }

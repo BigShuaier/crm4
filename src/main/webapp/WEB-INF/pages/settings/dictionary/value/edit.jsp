@@ -21,6 +21,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				var value=$.trim($("#edit-value").val())
 				var text=$.trim($("#edit-text").val())
 				var orderNo=$.trim($("#edit-orderNo").val())
+				var typeCode=$("#edit-typeCode").attr("name")
 				//检查字典值是否为空
 				if(value==""){
 					alert("字典值不能为空")
@@ -34,7 +35,8 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 						id:id,
 						value:value,
 						text:text,
-						orderNo:orderNo
+						orderNo:orderNo,
+						typeCode:typeCode
 					},
 					success:function(data){
 						if(data.code==1){
@@ -65,7 +67,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		<div class="form-group">
 			<label for="edit-typeCode" class="col-sm-2 control-label">所属字典类型</label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="edit-typeCode" style="width: 200%;" value="${dicValue.typeCode}" readonly>
+				<input type="text" class="form-control" id="edit-typeCode" style="width: 200%;" value="${dicValue.typeCode}" name="${typeCode}" readonly>
 			</div>
 		</div>
 

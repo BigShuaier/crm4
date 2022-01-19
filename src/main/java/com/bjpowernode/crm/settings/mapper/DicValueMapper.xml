@@ -116,4 +116,12 @@
       #{id}
     </foreach>
   </delete>
+  <select id="selectAllDicValueclueStateByTypeCode" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from tbl_dic_value
+    where type_code=#{typecode}
+  </select>
+<select id="selectDicTypeCode" resultType="java.lang.String">
+  select type_code from tbl_dic_value where id =#{id}
+</select>
 </mapper>

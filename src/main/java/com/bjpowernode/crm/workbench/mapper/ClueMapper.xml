@@ -24,12 +24,12 @@
     <result column="address" jdbcType="VARCHAR" property="address" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, full_name, appellation, owner, company, job, email, phone, website, mphone, state, 
-    source, create_by, create_time, edit_by, edit_time, description, contact_summary, 
+    id, full_name, appellation, owner, company, job, email, phone, website, mphone, state,
+    source, create_by, create_time, edit_by, edit_time, description, contact_summary,
     next_contact_time, address
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from tbl_clue
     where id = #{id,jdbcType=CHAR}
@@ -39,19 +39,19 @@
     where id = #{id,jdbcType=CHAR}
   </delete>
   <insert id="insert" parameterType="com.bjpowernode.crm.workbench.domain.Clue">
-    insert into tbl_clue (id, full_name, appellation, 
-      owner, company, job, email, 
-      phone, website, mphone, 
-      state, source, create_by, 
-      create_time, edit_by, edit_time, 
-      description, contact_summary, next_contact_time, 
+    insert into tbl_clue (id, full_name, appellation,
+      owner, company, job, email,
+      phone, website, mphone,
+      state, source, create_by,
+      create_time, edit_by, edit_time,
+      description, contact_summary, next_contact_time,
       address)
-    values (#{id,jdbcType=CHAR}, #{fullName,jdbcType=VARCHAR}, #{appellation,jdbcType=VARCHAR}, 
-      #{owner,jdbcType=CHAR}, #{company,jdbcType=VARCHAR}, #{job,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
-      #{phone,jdbcType=VARCHAR}, #{website,jdbcType=VARCHAR}, #{mphone,jdbcType=VARCHAR}, 
-      #{state,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=CHAR}, #{editBy,jdbcType=VARCHAR}, #{editTime,jdbcType=CHAR}, 
-      #{description,jdbcType=VARCHAR}, #{contactSummary,jdbcType=VARCHAR}, #{nextContactTime,jdbcType=CHAR}, 
+    values (#{id,jdbcType=CHAR}, #{fullName,jdbcType=VARCHAR}, #{appellation,jdbcType=VARCHAR},
+      #{owner,jdbcType=CHAR}, #{company,jdbcType=VARCHAR}, #{job,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+      #{phone,jdbcType=VARCHAR}, #{website,jdbcType=VARCHAR}, #{mphone,jdbcType=VARCHAR},
+      #{state,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR},
+      #{createTime,jdbcType=CHAR}, #{editBy,jdbcType=VARCHAR}, #{editTime,jdbcType=CHAR},
+      #{description,jdbcType=VARCHAR}, #{contactSummary,jdbcType=VARCHAR}, #{nextContactTime,jdbcType=CHAR},
       #{address,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.bjpowernode.crm.workbench.domain.Clue">
@@ -267,4 +267,94 @@
       address = #{address,jdbcType=VARCHAR}
     where id = #{id,jdbcType=CHAR}
   </update>
+  <select id="selectClueListForPageByCondition" resultMap="BaseResultMap">
+  select c.id, c.full_name, c.company, c.job,c. email, c.phone, c.website, c.mphone,
+    c. create_by, c.create_time,  c.edit_by,  c.edit_time,  c.description, c.contact_summary,c.next_contact_time, c.address,
+   tdv.value as appellation ,tdv1.value as source ,tdv2.value as state
+  ,tbu.name as owner
+
+  from tbl_clue c
+
+  left join tbl_dic_value tdv
+  on c.appellation=tdv.id
+
+  left join tbl_dic_value tdv1
+
+  on c.source=tdv1.id
+
+  left join tbl_dic_value tdv2
+
+  on c.state=tdv2.id
+
+  left join tbl_user tbu
+
+  on c.owner =tbu.id
+  <where>
+    <if test="name !=null and name !=''">
+    and c.full_name like '%' #{name} '%'
+   </if>
+    <if test="company!=null and company !=''">
+    and c.company like '%' #{company} '%'
+  </if>
+    <if test="phone!=null and phone !=''">
+      and c.phone like '%' #{phone} '%'
+    </if>
+    <if test="source!=null and source !=''">
+      and  c.source like '%' #{source} '%'
+    </if>
+    <if test="owner!=null and owner !=''">
+      and  c.owner like '%' #{owner} '%'
+    </if>
+    <if test="mphone!=null and mphone !=''">
+      and c.mphone like '%' #{mphone} '%'
+    </if>
+    <if test="clueState!=null and clueState!=''">
+      and  c.state like '%' #{clueState} '%'
+    </if>
+  </where>
+  order by c.create_time
+  limit #{pageNo},#{pageSize}
+  </select>
+  <select id="selectClueTotals" resultType="java.lang.Integer">
+    select count(*)
+    from tbl_clue c
+
+    left join tbl_dic_value tdv
+    on c.appellation=tdv.id
+
+    left join tbl_dic_value tdv1
+
+    on c.source=tdv1.id
+
+    left join tbl_dic_value tdv2
+
+    on c.state=tdv2.id
+
+    left join tbl_user tbu
+
+    on c.owner =tbu.id
+    <where>
+      <if test="name !=null and name !=''">
+        and c.full_name like '%' #{name} '%'
+      </if>
+      <if test="company!=null and company !=''">
+        and c.company like '%' #{company} '%'
+      </if>
+      <if test="phone!=null and phone !=''">
+        and c.phone like '%' #{phone} '%'
+      </if>
+      <if test="source!=null and source !=''">
+        and  c.source like '%' #{source} '%'
+      </if>
+      <if test="owner!=null and owner !=''">
+        and  c.owner like '%' #{owner} '%'
+      </if>
+      <if test="mphone!=null and mphone !=''">
+        and c.mphone like '%' #{mphone} '%'
+      </if>
+      <if test="clueState!=null and clueState!=''">
+        and  c.state like '%' #{clueState} '%'
+      </if>
+    </where>
+  </select>
 </mapper>

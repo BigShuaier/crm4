@@ -25,5 +25,14 @@ public interface DicValueServer {
 
     int saveEditDicValue(DicValue dicValue);
 
-    int deleteDicValue(String[] id);
+    int deleteDicValue( String[] id,String[] code);
+
+    /**
+     * 查询数据字典值中的的线索状态
+     * @param typecode
+     * @return
+     */
+    List<DicValue> queryAllDicValueclueStateByTypeCode(String typecode);
+
+    String queryDicTypeCode(String id);
 }

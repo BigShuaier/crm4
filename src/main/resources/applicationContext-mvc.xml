@@ -39,4 +39,12 @@ http://www.springframework.org/schema/util/spring-util.xsd">
         <property name="maxUploadSize" value="#{1024*1024*80}"/>
         <property name="defaultEncoding" value="utf-8"/>
     </bean>
+   <!-- <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/login"></mvc:exclude-mapping>
+            <mvc:exclude-mapping path="/showLogin"></mvc:exclude-mapping>
+            <bean class="com.bjpowernode.interceptor.LoginInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>-->
 </beans>

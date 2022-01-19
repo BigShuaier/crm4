@@ -23,4 +23,8 @@ public interface DicValueMapper {
     DicValue selectByPrimaryKey1(String id);
 
     int deleteCheckedId(String[] id);
+
+    List<DicValue> selectAllDicValueclueStateByTypeCode(String typecode);
+
+    String selectDicTypeCode(String id);
 }
