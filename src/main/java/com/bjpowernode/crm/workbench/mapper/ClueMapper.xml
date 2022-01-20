@@ -362,4 +362,29 @@
       #{id}
     </foreach>
   </delete>
+  <select id="selectDetailClueById" resultMap="BaseResultMap">
+    select tdv.value as appellation,tu.name as owner,tdv1.value as state,tdv2.value as source,tu1.name as createBy,
+    tc.id, tc.full_name,  tc.company, tc.job, tc.email, tc.phone, tc.website, tc.mphone,
+      tc.edit_by, tc.edit_time, tc.description, tc.contact_summary,
+    tc.next_contact_time, tc.address
+
+    from tbl_clue tc
+
+    left join tbl_dic_value tdv
+    on tc.appellation=tdv.id
+
+    left join tbl_user tu
+    on tc.owner=tu.id
+
+    left join tbl_dic_value tdv1
+    on tc.state=tdv1.id
+
+    left join tbl_dic_value tdv2
+    on tc.source=tdv2.id
+
+    left join tbl_user tu1
+    on tc.create_by=tu1.id
+
+    where tc.id=#{id}
+  </select>
 </mapper>

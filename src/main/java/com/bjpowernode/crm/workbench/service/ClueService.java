@@ -7,7 +7,10 @@ package com.bjpowernode.crm.workbench.service;/**
  */
 
 import com.bjpowernode.crm.commons.utils.PageinationVO;
+import com.bjpowernode.crm.workbench.domain.Activity;
 import com.bjpowernode.crm.workbench.domain.Clue;
+import com.bjpowernode.crm.workbench.domain.ClueActivityRelation;
+import com.bjpowernode.crm.workbench.domain.ClueRemark;
 
 import java.lang.management.OperatingSystemMXBean;
 import java.util.List;
@@ -33,4 +36,34 @@ public interface ClueService {
      * @return
      */
     int deleteClue(String[] id);
+
+    Clue queryDetalClueById(String id);
+
+    List<ClueRemark> queryClueRemarkById(String clueId);
+
+    int saveClueRemark(ClueRemark clueRemark);
+
+    /**
+     * 根据id更新线索备注
+     * @param clueRemark
+     * @return
+     */
+    int saveUpdateRemark(ClueRemark clueRemark);
+
+    /**
+     * 根据主键id删除备注信息
+     * @param id
+     * @return
+     */
+    int deleteClueRemark(String id);
+
+    List<Activity> queryClueRemarkRelation(String clueId);
+
+    int deleteClueRemarkRelation(String clueId, String id);
+
+    List<Activity> queryActivityByName(String clueId, String name);
+
+
+
+    int saveBundActivity(List<ClueActivityRelation> clueActivityRelations);
 }

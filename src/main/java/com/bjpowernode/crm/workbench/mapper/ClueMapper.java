@@ -23,4 +23,6 @@ public interface ClueMapper {
     Integer selectClueTotals();
 
     int deleteByIds(String[] id);
+
+    Clue selectDetailClueById(String id);
 }

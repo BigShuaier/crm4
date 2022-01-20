@@ -273,6 +273,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				}
 			})
 		})
+
 	});
 	//多条件分页查询市场活动列表数据
 	function queryClueListForPageByCondition(pageNo,pageSize){
@@ -304,7 +305,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				$.each(data.clueList,function (index,item) {
                    htmlStr+="<tr>";
                    htmlStr+="<td><input type=\"checkbox\" value='"+item.id+"'/></td>";
-                   htmlStr+="<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='workbench/clue/detailClue.do?id=8cfb85063ab3462bb1f426a65a5f332d';\">"+item.fullName+item.appellation+"</a></td>";
+                   htmlStr+="<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='workbench/clue/detailClue.do?id="+item.id+"';\">"+item.fullName+item.appellation+"</a></td>";
                    htmlStr+="<td>"+item.company+"</td>";
                    htmlStr+="<td>"+item.phone+"</td>";
                    htmlStr+="<td>"+item.mphone+"</td>";

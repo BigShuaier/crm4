@@ -256,6 +256,29 @@ limit #{pageNo},#{pageSize}
       #{id}
     </foreach>
   </select>
+  <select id="selectClueRemarkRelation" resultMap="BaseResultMap">
+    select tur.name as owner,tay.id, tay.name, tay.start_date, tay.end_date, tay.cost, tay.description, tay.create_time, tay.create_by,
+    tay.edit_time, tay.edit_by
+    from tbl_activity tay
+    left join tbl_user tur
+    on tay.owner=tur.id
+    where tay.id in(
+    select activity_id from tbl_clue_activity_relation
+    where clue_id=#{clueId}
+    )
+  </select>
+  <select id="selectActivityByName" resultMap="BaseResultMap">
+    select tur.name as owner,tay.id, tay.name, tay.start_date, tay.end_date, tay.cost, tay.description, tay.create_time, tay.create_by,
+    tay.edit_time, tay.edit_by
+    from tbl_activity tay
+    left join tbl_user tur
+    on tay.owner=tur.id
+    where tay.id not in(
+    select activity_id from tbl_clue_activity_relation
+    where clue_id=#{clueId}
+    )
+    and tay.name like '%' #{name} '%'
+  </select>
 </mapper>
 
 

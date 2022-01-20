@@ -10,7 +10,7 @@
     id, clue_id, activity_id
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from tbl_clue_activity_relation
     where id = #{id,jdbcType=CHAR}
@@ -62,6 +62,13 @@
     </set>
     where id = #{id,jdbcType=CHAR}
   </update>
+  <insert id="insertBundActivity">
+    insert into tbl_clue_activity_relation (id, clue_id, activity_id)
+    values
+    <foreach collection="list" separator="," item="obj">
+      (#{obj.id,jdbcType=CHAR}, #{obj.clueId,jdbcType=CHAR}, #{obj.activityId,jdbcType=CHAR} )
+    </foreach>
+  </insert>
   <update id="updateByPrimaryKey" parameterType="com.bjpowernode.crm.workbench.domain.ClueActivityRelation">
     update tbl_clue_activity_relation
     set clue_id = #{clueId,jdbcType=CHAR},

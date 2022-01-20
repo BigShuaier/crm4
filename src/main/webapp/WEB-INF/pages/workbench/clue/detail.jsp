@@ -11,12 +11,12 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
-
+<script type="text/javascript" src="jquery/common/common.js"></script>
 <script type="text/javascript">
 
 	//默认情况下取消和保存按钮是隐藏的
 	var cancelAndSaveBtnDefault = true;
-	
+
 	$(function(){
 		$("#remark").focus(function(){
 			if(cancelAndSaveBtnDefault){
@@ -27,7 +27,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				cancelAndSaveBtnDefault = false;
 			}
 		});
-		
+
 		$("#cancelBtn").click(function(){
 			//显示
 			$("#cancelAndSaveBtn").hide();
@@ -35,7 +35,20 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			$("#remarkDiv").css("height","90px");
 			cancelAndSaveBtnDefault = true;
 		});
-		
+
+		$("#remarkDivList").on("mouseover",".remarkDiv",function () {
+			$(this).children("div").children("div").show();
+		});
+		$("#remarkDivList").on("mouseout",".remarkDiv",function () {
+			$(this).children("div").children("div").hide();
+		});
+		$("#remarkDivList").on("mouseover",".myHref",function () {
+			$(this).children("span").css("color","red");
+		});
+		$("#remarkDivList").on("mouseout",".myHref",function () {
+			$(this).children("span").css("color","#E6E6E6");
+		});
+
 		$(".remarkDiv").mouseover(function(){
 			$(this).children("div").children("div").show();
 		});
@@ -48,9 +61,235 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		$(".myHref").mouseout(function(){
 			$(this).children("span").css("color","#E6E6E6");
 		});
+		queryClueRemarkList()
+		var clueId="${clue.id}"
+		//给添加备注保存按钮添加单击事件
+		$("#saveClueRemarkBtn").on("click",function(){
+			var remark=$("#remark").val()
+			if(remark==""){
+				alert("备注内容不能为空")
+				return
+			}
 
+			$.ajax({
+				url:"workbench/clue/saveClueRemark.do",
+				type:"post",
+				data:{
+					noteContent:remark,
+					clueId:clueId
+				},
+				success:function (data) {
+					if(data.code==1){
+						alert("添加成功")
+						$("#remark").val("")
+						queryClueRemarkList()
+					}else {
+						alert(data.message)
+					}
+				}
+			})
+		})
+
+
+
+		//给修改备注保存按钮添加单击事件
+		$("#updateRemarkBtn").on("click",function () {
+			var noteContent =$("#edit-noteContent").val()
+			var remarkId=$("#remarkId").val()
+			$.ajax({
+				url:"workbench/clue/updateRemark.do",
+				type:"post",
+				data:{
+					noteContent:noteContent,
+					id:remarkId
+				},
+				success:function (data) {
+					if(data.code==1){
+						alert("更新成功")
+						queryClueRemarkList()
+						$("#editRemarkModal").modal("hide")
+					}
+				}
+			})
+
+		})
+
+
+		//查询与线索相关市场活动信息
+		queryClueRemarkRelation()
+
+
+		//给关联市场活动按钮添加单击事件
+		$("#bundActivityBtn").on("click",function(){
+			$("#tBody").html("")
+			$("#searchActivityName").val("")
+			$("#bundModal").modal("show")
 	});
-	
+
+
+		//给关联市场活动页面的查询文本框添加keyup事件
+		$("#searchActivityName").on("keyup",function () {
+		var name=$.trim($("#searchActivityName").val())
+
+		$.ajax({
+			url:"workbench/clue/queryActivityByName.do",
+			type:"post",
+			data:{
+				clueId:clueId,
+				name:name
+			},
+			success:function (data) {
+				var htmlStr=""
+				$.each(data,function (index,item) {
+					htmlStr+="<tr>"
+					htmlStr+="<td><input type=\"checkbox\" value='"+item.id+"'/></td>"
+					htmlStr+="<td>"+item.name+"</td>"
+					htmlStr+="<td>"+item.startDate+"</td>"
+					htmlStr+="<td>"+item.endDate+"</td>"
+					htmlStr+="<td>"+item.owner+"</td>"
+					htmlStr+="</tr>"
+				})
+				$("#tBody").html(htmlStr)
+			}
+		})
+	})
+
+
+		//给关联按钮添加单击事件
+		$("#saveBundActivityBtn").on("click",function (){
+			//获取市场活动id
+			var checkeds=$("#tBody input[type=checkbox]:checked")
+			if(checkeds.size()==0){
+				alert("请选择一条数据")
+			}
+			//拼接请求参数
+			var ids=""
+			$.each(checkeds,function (index,item) {
+				ids+="id="+$(item).val()+"&"
+			})
+			//获取线索id
+
+			//发起异步请求
+			$.ajax({
+				url:"workbench/clue/saveBundActivity.do",
+				type:"post",
+				data:ids+"clueId="+clueId,
+				success:function (data) {
+					if(data.code==1){
+						alert("您成功关联了"+data.data+"条市场记录")
+						$("#bundModal").modal("hide")
+						queryClueRemarkRelation()
+					}else{
+						alert(data.message)
+					}
+				},
+
+			})
+		})
+
+
+		//给转换按钮添加单击事件
+		$("#convertBtn").on("click",function () {
+			window.location.href="workbench/clue/convert.do"
+		})
+	})
+	//查询线索备注列表信息
+	function queryClueRemarkList(){
+		var clueId="${clue.id}"
+
+		$.ajax({
+			url:"workbench/clue/queryClueRemarkList.do",
+			type:"post",
+			data:{
+				clueId:clueId
+			},
+			success:function (data) {
+				var htmlStr=""
+				var fullName="${clue.fullName}"
+				var appellation="${clue.appellation}"
+				$.each(data,function (index,item) {
+					htmlStr+="<div class=\"remarkDiv\" style=\"height: 60px;\">"
+					htmlStr+="<img title=\"zhangsan\" src=\"image/user-thumbnail.png\" style=\"width: 30px; height:30px;\">"
+					htmlStr+="<div style=\"position: relative; top: -40px; left: 40px;\" >"
+					htmlStr+="<h5>"+item.noteContent+"</h5>"
+					htmlStr+="<font color=\"gray\">线索</font> <font color=\"gray\">-</font> <b>"+fullName+appellation+"</b> <small style=\"color: gray;\">"+item.createTime+"由 "+item.createBy+"</small>"
+					htmlStr+="<div style=\"position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;\">"
+					htmlStr+="<a class=\"myHref\" onclick= \"editClueRemarkPage('"+item.id+"','"+item.noteContent+"')\"><span class=\"glyphicon glyphicon-edit\" style=\"font-size: 20px; color: #E6E6E6;\"></span></a>"
+					htmlStr+="&nbsp;&nbsp;&nbsp;&nbsp;"
+					htmlStr+="<a class=\"myHref\" onclick=\"deleteClueRemark('"+item.id+"')\"><span class=\"glyphicon glyphicon-remove\" style=\"font-size: 20px; color: #E6E6E6;\"></span></a>"
+					htmlStr+="</div>"
+					htmlStr+="</div>"
+					htmlStr+="</div>"
+				})
+				$("#remarkClue").html(htmlStr)
+			}
+		})
+	}
+	function editClueRemarkPage(id,noteContent){
+		$("#remarkId").val(id)
+		$("#edit-noteContent").val(noteContent)
+		$("#editRemarkModal").modal("show")
+	}
+
+	function deleteClueRemark(id) {
+		$.ajax({
+			url:"workbench/clue/deleteClueRemark.do",
+			type:"post",
+			data:{
+				id:id
+			},
+			success:function (data) {
+				if(data.code==1){
+					alert("删除成功")
+					queryClueRemarkList()
+				}else {
+					data.message
+				}
+			}
+		})
+	}
+	//查询与线索相关市场活动信息
+	function queryClueRemarkRelation(){
+		var clueId="${clue.id}"
+		$.ajax({
+			url:"workbench/clue/ClueRemarkRelation.do",
+			type:"post",
+			data:{
+				clueId:clueId
+			},
+			success:function (data) {
+				var htmlStr=""
+				$.each(data,function (index,item) {
+					htmlStr+="<tr>"
+					htmlStr+="<td>"+item.name+"</td>"
+					htmlStr+="<td>"+item.startDate+"</td>"
+					htmlStr+="<td>"+item.endDate+"</td>"
+					htmlStr+="<td>"+item.owner+"</td>"
+					htmlStr+="<td><a onclick=\"deleteClueRemarkRelation('"+clueId+"','"+item.id+"')\"   style=\"text-decoration: none;\"><span class=\"glyphicon glyphicon-remove\"></span>解除关联</a></td>"
+					htmlStr+="</tr>"
+				})
+				$("#relationTBody").html(htmlStr)
+			}
+		})
+	}
+	function deleteClueRemarkRelation(clueId,id){
+		$.ajax({
+			url:"workbench/clue/deleteClueRemarkRelation.do",
+			type:"post",
+			data:{
+				clueId:clueId,
+				id:id
+			},
+			success:function (data) {
+				if(data.code==1){
+					alert("删除成功")
+					queryClueRemarkRelation()
+				}else {
+					data.message
+				}
+			}
+		})
+	}
 </script>
 
 </head>
@@ -78,7 +317,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					<table id="activityTable" class="table table-hover" style="width: 900px; position: relative;top: 10px;">
 						<thead>
 							<tr style="color: #B3B3B3;">
-								<td><input type="checkbox"/></td>
+								<td><input type="checkbox"id="chkedAll"/></td>
 								<td>名称</td>
 								<td>开始日期</td>
 								<td>结束日期</td>
@@ -87,20 +326,8 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 							</tr>
 						</thead>
 						<tbody id="tBody">
-							<tr>
-								<td><input type="checkbox"/></td>
-								<td>发传单</td>
-								<td>2020-10-10</td>
-								<td>2020-10-20</td>
-								<td>zhangsan</td>
-							</tr>
-							<tr>
-								<td><input type="checkbox"/></td>
-								<td>发传单</td>
-								<td>2020-10-10</td>
-								<td>2020-10-20</td>
-								<td>zhangsan</td>
-							</tr>
+
+
 						</tbody>
 					</table>
 				</div>
@@ -117,7 +344,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 	<div style="position: relative; top: 35px; left: 10px;">
 		<a href="javascript:void(0);" onclick="window.history.back();"><span class="glyphicon glyphicon-arrow-left" style="font-size: 20px; color: #DDDDDD"></span></a>
 	</div>
-	
+
 	<!-- 大标题 -->
 	<div style="position: relative; left: 40px; top: -30px;">
 		<div class="page-header">
@@ -125,10 +352,10 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		</div>
 		<div style="position: relative; height: 50px; width: 500px;  top: -72px; left: 700px;">
 			<button id="convertBtn" type="button" class="btn btn-default"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
-			
+
 		</div>
 	</div>
-	
+
 	<br/>
 	<br/>
 	<br/>
@@ -218,52 +445,61 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
             <div style="height: 1px; width: 850px; background: #D5D5D5; position: relative; top: -20px;"></div>
         </div>
 	</div>
-	
+
+	<!-- 修改市场活动备注的模态窗口 -->
+	<div class="modal fade" id="editRemarkModal" role="dialog">
+		<%-- 备注的id --%>
+		<input type="hidden" id="remarkId">
+		<div class="modal-dialog" role="document" style="width: 40%;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">修改备注</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<input type="hidden" id="edit-id">
+						<div class="form-group">
+							<label for="edit-noteContent" class="col-sm-2 control-label">内容</label>
+							<div class="col-sm-10" style="width: 81%;">
+								<textarea class="form-control" rows="3" id="edit-noteContent"></textarea>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" id="updateRemarkBtn">更新</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!-- 备注 -->
-	<div style="position: relative; top: 40px; left: 40px;">
+	<div id="remarkDivList" style="position: relative; top: 40px; left: 40px;">
 		<div class="page-header">
 			<h4>备注</h4>
 		</div>
 		<!--作业：显示备注信息-->
 		<!-- 备注1 -->
-		<div class="remarkDiv" style="height: 60px;">
-			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
-			<div style="position: relative; top: -40px; left: 40px;" >
-				<h5>哎呦！</h5>
-				<font color="gray">线索</font> <font color="gray">-</font> <b>李四先生-动力节点</b> <small style="color: gray;"> 2017-01-22 10:10:10 由zhangsan</small>
-				<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
-					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
-					&nbsp;&nbsp;&nbsp;&nbsp;
-					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
-				</div>
-			</div>
+		<div id="remarkClue" >
+
 		</div>
-		
-		<!-- 备注2 -->
-		<div class="remarkDiv" style="height: 60px;">
-			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
-			<div style="position: relative; top: -40px; left: 40px;" >
-				<h5>呵呵！</h5>
-				<font color="gray">线索</font> <font color="gray">-</font> <b>李四先生-动力节点</b> <small style="color: gray;"> 2017-01-22 10:20:10 由zhangsan</small>
-				<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
-					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
-					&nbsp;&nbsp;&nbsp;&nbsp;
-					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
-				</div>
-			</div>
-		</div>
-		
+
+
 		<div id="remarkDiv" style="background-color: #E6E6E6; width: 870px; height: 90px;">
 			<form role="form" style="position: relative;top: 10px; left: 10px;">
 				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
 				<p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
 					<button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<button type="button" class="btn btn-primary" id="saveClueRemarkBtn">保存</button>
 				</p>
 			</form>
 		</div>
 	</div>
-	
+
 	<!-- 市场活动 -->
 	<div>
 		<div style="position: relative; top: 60px; left: 40px;">
@@ -272,7 +508,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			</div>
 			<div style="position: relative;top: 0px;">
 				<table class="table table-hover" style="width: 900px;">
-					<thead>
+					<thead id="">
 						<tr style="color: #B3B3B3;">
 							<td>名称</td>
 							<td>开始日期</td>
@@ -299,14 +535,14 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					</tbody>
 				</table>
 			</div>
-			
+
 			<div>
 				<a id="bundActivityBtn" href="javascript:void(0);" style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>关联市场活动</a>
 			</div>
 		</div>
 	</div>
-	
-	
+
+
 	<div style="height: 200px;"></div>
 </body>
 </html>

@@ -1,6 +1,7 @@
 package com.bjpowernode.crm.workbench.mapper;
 
 import com.bjpowernode.crm.workbench.domain.Activity;
+import com.bjpowernode.crm.workbench.domain.ClueActivityRelation;
 
 import java.util.List;
 import java.util.Map;
@@ -32,4 +33,8 @@ public interface ActivityMapper {
     Activity selectActivityById(String id);
 
     List<Activity > selectListByPrimaryKey(String[] id);
+
+    List<Activity> selectClueRemarkRelation(String clueId);
+
+    List<Activity> selectActivityByName(Map<String, Object> pramMap);
 }

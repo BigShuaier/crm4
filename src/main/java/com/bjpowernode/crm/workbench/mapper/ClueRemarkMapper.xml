@@ -15,7 +15,7 @@
     id, note_content, create_by, create_time, edit_by, edit_time, edit_flag, clue_id
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from tbl_clue_remark
     where id = #{id,jdbcType=CHAR}
@@ -25,11 +25,11 @@
     where id = #{id,jdbcType=CHAR}
   </delete>
   <insert id="insert" parameterType="com.bjpowernode.crm.workbench.domain.ClueRemark">
-    insert into tbl_clue_remark (id, note_content, create_by, 
-      create_time, edit_by, edit_time, 
+    insert into tbl_clue_remark (id, note_content, create_by,
+      create_time, edit_by, edit_time,
       edit_flag, clue_id)
-    values (#{id,jdbcType=CHAR}, #{noteContent,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=CHAR}, #{editBy,jdbcType=VARCHAR}, #{editTime,jdbcType=CHAR}, 
+    values (#{id,jdbcType=CHAR}, #{noteContent,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR},
+      #{createTime,jdbcType=CHAR}, #{editBy,jdbcType=VARCHAR}, #{editTime,jdbcType=CHAR},
       #{editFlag,jdbcType=CHAR}, #{clueId,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.bjpowernode.crm.workbench.domain.ClueRemark">
@@ -125,4 +125,18 @@
       clue_id = #{clueId,jdbcType=CHAR}
     where id = #{id,jdbcType=CHAR}
   </update>
+  <select id="selectClueRemarkById" resultMap="BaseResultMap">
+    select  tu.name as createBy,tar.id, tar.note_content, tar.create_time,tar. edit_by, tar.edit_time, tar.edit_flag
+    from tbl_clue_remark tar
+    left join
+    tbl_user tu
+    on tar.create_by=tu.id
+    where tar.clue_id=#{clueId}
+    order by tar.create_time desc
+  </select>
+  <delete  id="deleteClueRemarkRelation">
+    delete from tbl_clue_activity_relation
+    where activity_id=#{id} and clue_id=#{clueId}
+  </delete>
+
 </mapper>
