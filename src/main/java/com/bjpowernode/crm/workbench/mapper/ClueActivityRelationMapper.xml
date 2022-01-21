@@ -75,4 +75,14 @@
       activity_id = #{activityId,jdbcType=CHAR}
     where id = #{id,jdbcType=CHAR}
   </update>
+  <select id="selectByClueId" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from tbl_clue_activity_relation
+    where clue_id =#{clueId}
+  </select>
+  <delete id="deleteCatmByClueId">
+    delete from tbl_clue_activity_relation
+    where clue_id=#{clueId}
+  </delete>
+
 </mapper>

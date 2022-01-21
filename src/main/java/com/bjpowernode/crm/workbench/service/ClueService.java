@@ -66,4 +66,6 @@ public interface ClueService {
 
 
     int saveBundActivity(List<ClueActivityRelation> clueActivityRelations);
+
+    void doconvert(Map<String, Object> pramMap);
 }

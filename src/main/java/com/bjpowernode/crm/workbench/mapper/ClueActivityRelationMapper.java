@@ -18,4 +18,8 @@ public interface ClueActivityRelationMapper {
     int updateByPrimaryKey(ClueActivityRelation record);
 
     int insertBundActivity(List<ClueActivityRelation> clueActivityRelations);
+
+    List<ClueActivityRelation> selectByClueId(String clueId);
+
+    int deleteCatmByClueId(String clueId);
 }

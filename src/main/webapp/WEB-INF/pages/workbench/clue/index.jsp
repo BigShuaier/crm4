@@ -239,7 +239,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					if(data.code==1){
 						alert("更新成功")
 					$("#editClueModal").modal("hide")
-						queryClueListForPageByCondition($("#demo_pag1").bs_pagination("getOption","currentPage"),queryClueListForPageByCondition($("#demo_pag1").bs_pagination("getOption","rowsPerPage")))
+					queryClueListForPageByCondition($("#demo_pag1").bs_pagination("getOption","currentPage"),$("#demo_pag1").bs_pagination("getOption","rowsPerPage"))
 					}else {
 						data.message
 					}

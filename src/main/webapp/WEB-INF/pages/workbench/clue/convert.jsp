@@ -13,12 +13,23 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 
 
-<link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
-<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
+    <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
 <script type="text/javascript">
 	$(function(){
+        //当容器加载完成，对容器调用工具函数
+        $(".mydate").datetimepicker({
+            language:'zh-CN',//语言
+            format:'yyyy-mm-dd',//日期格式
+            minView:'month',//日期选择器上最小能选择的日期的视图
+            initialDate:new Date(),// 日历的初始化显示日期，此处默认初始化当前系统时间
+            autoclose:true,//选择日期之后，是否自动关闭日历
+            todayBtn:true,//是否显示当前日期的按钮
+            clearBtn:true,//是否显示清空按钮
+        });
 		$("#isCreateTransaction").click(function(){
 			if(this.checked){
 				$("#create-transaction2").show(200);
@@ -26,13 +37,82 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				$("#create-transaction2").hide(200);
 			}
 		});
+        //给市场活动源查询按钮添加单击事件
+        $("#searchActivityBtn").on("click",function (){
 
+			$("#searchActivityModal").modal("show")
+
+        })
+		$("#searchActivityText").on("keyup",function (){
+			var clueId="${clue.id}"
+			$.ajax({
+				url:"workbench/clue/searchActivity.do",
+				type:"post",
+				data:{
+					clueId:clueId
+				},
+				success:function (data) {
+					var htmlStr=""
+					$.each(data,function (index,item) {
+						htmlStr+="<tr>"
+						htmlStr+="<td><input type=\"radio\" onclick=\"checkConvertActivity('"+item.id+"','"+item.name+"')\" name=\"activity\"/></td>"
+						htmlStr+="<td>"+item.name+"</td>"
+						htmlStr+="<td>"+item.startDate+"</td>"
+						htmlStr+="<td>"+item.endDate+"</td>"
+						htmlStr+="<td>"+item.owner+"</td>"
+						htmlStr+="</tr>"
+					})
+					$("#tBody").html(htmlStr)
+				}
+			})
+		})
+		//给转换按钮绑定一个单击事件
+
+
+		$("#convertBtn").on("click",function () {
+			//获取需要转换的参数
+			var clueId=$("#clueId").val()
+			var isCreateTransaction=$("#isCreateTransaction").prop("checked")
+			var amountOfMoney=$.trim($("#amountOfMoney").val())
+			var tradeName=$.trim($("#tradeName").val())
+			var expectedClosingDate=$("#expectedClosingDate").val()
+			var stage=$("#stage").val()
+			var activityId=$("#activityId").val()
+
+			//发起转换请求
+			$.ajax({
+				url:"workbench/clue/convert.do",
+				type:"post",
+				data:{
+					clueId:clueId,
+					isCreateTransaction:isCreateTransaction,
+					amountOfMoney:amountOfMoney,
+					tradeName:tradeName,
+					expectedClosingDate:expectedClosingDate,
+					stage:stage,
+					activityId:activityId
+				},
+				success:function (data) {
+					if(data.code==1){
+						alert("转换成功")
+						window.location.href="workbench/clue/index.do"
+					}else{
+						data.message
+					}
+				}
+			})
+		})
 	});
+	function checkConvertActivity(id,name){
+		$("#activityId").val(id)
+		$("#activityName").val(name)
+		$("#searchActivityModal").modal("hide")
+	}
 </script>
 
 </head>
 <body>
-	
+
 	<!-- 搜索市场活动的模态窗口 -->
 	<div class="modal fade" id="searchActivityModal" role="dialog" >
 		<div class="modal-dialog" role="document" style="width: 90%;">
@@ -64,20 +144,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 							</tr>
 						</thead>
 						<tbody id="tBody">
-							<tr>
-								<td><input type="radio" name="activity"/></td>
-								<td>发传单</td>
-								<td>2020-10-10</td>
-								<td>2020-10-20</td>
-								<td>zhangsan</td>
-							</tr>
-							<tr>
-								<td><input type="radio" name="activity"/></td>
-								<td>发传单</td>
-								<td>2020-10-10</td>
-								<td>2020-10-20</td>
-								<td>zhangsan</td>
-							</tr>
+
 						</tbody>
 					</table>
 				</div>
@@ -99,7 +166,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		为客户创建交易
 	</div>
 	<div id="create-transaction2" style="position: relative; left: 40px; top: 20px; width: 80%; background-color: #F7F7F7; display: none;" >
-	
+
 		<form>
 		  <div class="form-group" style="width: 400px; position: relative; left: 20px;">
 		    <label for="amountOfMoney">金额</label>
@@ -111,29 +178,30 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
 		    <label for="expectedClosingDate">预计成交日期</label>
-		    <input type="text" class="form-control" id="expectedClosingDate">
+		    <input type="text" class="form-control mydate" id="expectedClosingDate" readonly>
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
 		    <label for="stage">阶段</label>
 		    <select id="stage"  class="form-control">
-		    	<option></option>
+		    	<option>----请选择----</option>
 		    	<c:forEach items="${stageList}" var="s">
 					<option value="${s.id}">${s.value}</option>
 				</c:forEach>
 		    </select>
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
-		    <label for="activityName">市场活动源&nbsp;&nbsp;<a id="searchActivityBtn" href="javascript:void(0);" style="text-decoration: none;"><span class="glyphicon glyphicon-search"></span></a></label>
+		    <label for="activityName">市场活动源&nbsp;&nbsp;<a id="searchActivityBtn"  style="text-decoration: none;"><span class="glyphicon glyphicon-search"></span></a></label>
 		    	<input type="hidden" id="activityId">
 			  <input type="text" class="form-control" id="activityName" placeholder="点击上面搜索" readonly>
 		  </div>
 		</form>
-		
+
 	</div>
-	
+
 	<div id="owner" style="position: relative; left: 40px; height: 35px; top: 50px;">
 		记录的所有者：<br>
 		<b>${clue.owner}</b>
+		<input id="clueId" type="hidden" value="${clue.id}">
 	</div>
 	<div id="operation" style="position: relative; left: 40px; height: 35px; top: 100px;">
 		<input id="convertBtn" class="btn btn-primary" type="button" value="转换">

@@ -19,6 +19,7 @@ import com.bjpowernode.crm.workbench.domain.Activity;
 import com.bjpowernode.crm.workbench.domain.Clue;
 import com.bjpowernode.crm.workbench.domain.ClueActivityRelation;
 import com.bjpowernode.crm.workbench.domain.ClueRemark;
+import com.bjpowernode.crm.workbench.service.ActivityService;
 import com.bjpowernode.crm.workbench.service.ClueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -252,8 +253,62 @@ public class ClueController {
     }
 
 
-    @RequestMapping("workbench/clue/convert.do")
-    public String convertPage(){
+    @RequestMapping("workbench/clue/clueConvertPage.do")
+    public String convertPage(HttpServletRequest request,String clueId){
+        Clue clue = clueService.queryDetalClueById(clueId);
+        //获取阶段数据
+        List<DicValue> stageList = dicValueServer.queryAllDicValueclueStateByTypeCode("stage");
+        request.setAttribute("clue", clue);
+        request.setAttribute("stageList", stageList);
+
         return "workbench/clue/convert";
+
+    }
+
+    @RequestMapping("workbench/clue/searchActivity.do")
+    public @ResponseBody Object searchActivity(String clueId){
+        List<Activity> activityList = clueService.queryClueRemarkRelation(clueId);
+        return activityList;
+    }
+
+
+    @RequestMapping("workbench/clue/convert.do")
+    @ResponseBody
+    public Object convert(
+            @RequestParam(value = "clueId",required = true)String clueId,
+            @RequestParam(value = "isCreateTransaction",required = false)boolean isCreateTransaction,
+            @RequestParam(value = "amountOfMoney",required = false)String amountOfMoney,
+            @RequestParam(value = "expectedClosingDate",required = false)String expectedClosingDate,
+            @RequestParam(value = "stage",required = false)String stage,
+            @RequestParam(value = "activityId",required = false)String activityId,
+            @RequestParam(value = "tradeName",required = false)String tradeName,
+            HttpServletRequest request
+    ){
+               /* clueId:clueId,
+                isCreateTransaction:isCreateTransaction,
+                amountOfMoney:amountOfMoney,
+                tradeName:tradeName,
+                expectedClosingDate:expectedClosingDate,
+                stage:stage,
+                activityId:activityId
+                */
+
+        try {
+            Map<String,Object>pramMap=new HashMap<>();
+            User sessionUser = (User)request.getSession().getAttribute(Contant.SESSION_USER);
+            pramMap.put("clueId", clueId);
+            pramMap.put("isCreateTransaction", isCreateTransaction);
+            pramMap.put("amountOfMoney", amountOfMoney);
+            pramMap.put("expectedClosingDate", expectedClosingDate);
+            pramMap.put("stage", stage);
+            pramMap.put("activityId", activityId);
+            pramMap.put("sessionUser",sessionUser);
+            pramMap.put("tradeName", tradeName);
+            clueService.doconvert(pramMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Result.fail("转换失败");
+        }
+        return Result.success();
     }
 }

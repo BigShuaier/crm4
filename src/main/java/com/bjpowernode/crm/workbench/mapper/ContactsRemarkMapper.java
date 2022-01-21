@@ -1,6 +1,9 @@
 package com.bjpowernode.crm.workbench.mapper;
 
 import com.bjpowernode.crm.workbench.domain.ContactsRemark;
+import com.bjpowernode.crm.workbench.domain.CustomerRemark;
+
+import java.util.List;
 
 public interface ContactsRemarkMapper {
     int deleteByPrimaryKey(String id);
@@ -14,4 +17,8 @@ public interface ContactsRemarkMapper {
     int updateByPrimaryKeySelective(ContactsRemark record);
 
     int updateByPrimaryKey(ContactsRemark record);
+
+    int insertcontactsRemarkList(List<ContactsRemark> contactsRemarks);
+
+
 }

@@ -138,5 +138,8 @@
     delete from tbl_clue_activity_relation
     where activity_id=#{id} and clue_id=#{clueId}
   </delete>
-
+  <delete  id="deleteByClueId">
+    delete from tbl_clue_remark
+    where clue_id=#{clueId}
+  </delete>
 </mapper>

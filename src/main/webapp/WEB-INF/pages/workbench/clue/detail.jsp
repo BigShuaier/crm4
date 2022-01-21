@@ -190,7 +190,8 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 
 		//给转换按钮添加单击事件
 		$("#convertBtn").on("click",function () {
-			window.location.href="workbench/clue/convert.do"
+
+			window.location.href="workbench/clue/clueConvertPage.do?clueId="+clueId
 		})
 	})
 	//查询线索备注列表信息

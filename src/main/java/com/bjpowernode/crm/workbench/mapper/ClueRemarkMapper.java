@@ -21,4 +21,6 @@ public interface ClueRemarkMapper {
     List<ClueRemark> selectClueRemarkById(String clueId);
 
     int deleteClueRemarkRelation(Map<String, Object> pramMap);
+
+    int deleteByClueId(String clueId);
 }
